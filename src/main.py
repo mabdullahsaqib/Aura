@@ -37,12 +37,12 @@ def update_memory(collection: str, doc_id: str, updates: dict):
 
 # Example Usage
 if __name__ == "__main__":
-    # # Save a memory example
-    # save_to_memory("interaction_history", {"command": "What's the weather?", "response": "It's sunny", "context": "Weather inquiry"})
-    #
-    # # Retrieve recent memories
-    # memories = retrieve_memory("interaction_history", limit=5)
-    # print(memories)
+    # Save a memory example
+    save_to_memory("interaction_history", {"command": "From now on, your name will be Jarvis", "response": "Yes, Mr Stark, as you wish, I shall be known as Jarvis from now on", "context": "Assigning name"})
 
-    # Update a memory example (replace 'your_doc_id' with actual document ID)
-    update_memory("interaction_history", "K2HAtSWXVCtRZWEtLXQG", {"context": "Updated weather inquiry"})
+    # Retrieve recent memories
+    memories = retrieve_memory("interaction_history", limit=5)
+    print(memories)
+
+    # # Update a memory example (replace 'your_doc_id' with actual document ID)
+    # update_memory("interaction_history", "K2HAtSWXVCtRZWEtLXQG", {"context": "Updated weather inquiry"})
