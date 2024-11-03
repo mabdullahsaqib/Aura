@@ -13,7 +13,7 @@ def save_to_chat(session_id: str, command: str, response: str):
     """
     Append a new command-response pair to the continuous chat document.
     """
-    chat_ref = db.collection("continuous_chats").document(session_id)
+    chat_ref = db.collection("interaction_history").document(session_id)
 
     # Data to append
     new_message = {
@@ -32,7 +32,7 @@ def retrieve_chat(session_id: str):
     """
     Retrieve the chat history for a given session.
     """
-    chat_ref = db.collection("continuous_chats").document(session_id)
+    chat_ref = db.collection("interaction_history").document(session_id)
     chat = chat_ref.get()
     if chat.exists:
         print(f"Retrieved chat session {session_id}:")
@@ -48,8 +48,8 @@ if __name__ == "__main__":
 
     # Append a new message to the chat
     save_to_chat(session_id, "From now on, your name will be jarvis", "Copy that!")
-    # save_to_chat(session_id, "Tell me a joke.",
-    #              "Why did the scarecrow win an award? Because he was outstanding in his field!")
+    save_to_chat(session_id, "Tell me a joke.",
+                 "Why did the scarecrow win an award? Because he was outstanding in his field!")
 
     # Retrieve chat history
     chat_history = retrieve_chat(session_id)
