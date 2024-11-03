@@ -1,57 +1,81 @@
 import firebase_admin
 from firebase_admin import credentials, firestore
 from datetime import datetime
+import google.generativeai as genai
 
 # Initialize Firestore
-cred = credentials.Certificate("../credentials.json")
+cred = credentials.Certificate(".json")
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
+# Configure GEMINI API
+genai.configure(api_key="")
 
-# Save or Append to Continuous Chat
-def save_to_chat(session_id: str, command: str, response: str):
+# Function to get and increment session ID
+def get_next_session_id():
     """
-    Append a new command-response pair to the continuous chat document.
+    Retrieve and increment the session ID from a dedicated counter document in Firestore.
     """
-    chat_ref = db.collection("interaction_history").document(session_id)
+    counter_ref = db.collection("metadata").document("session_counter")
+    counter_doc = counter_ref.get()
+    current_id = counter_doc.to_dict().get("count", 0) if counter_doc.exists else 0
+    next_id = current_id + 1
+    counter_ref.set({"count": next_id})  # Update the counter in Firestore
+    return next_id  # Use plain numeric ID
 
-    # Data to append
-    new_message = {
-        "timestamp": datetime.now(),
-        "command": command,
-        "response": response
-    }
+# Retrieve Latest Session's History by ID
+def get_last_session_history():
+    """
+    Retrieve the chat history from the latest session in Firestore.
+    """
+    # Fetch the latest session document by ordering by ID in descending order
+    sessions = db.collection("interaction_history").order_by("__name__", direction=firestore.Query.DESCENDING).limit(1).stream()
+    history = []
 
-    # Use Firestore's arrayUnion to append to the messages array
+    # Get messages from the latest session
+    for session in sessions:
+        messages = session.to_dict().get("messages", [])
+        for message in messages:
+            if "command" in message and "response" in message:
+                history.append({"role": "user", "parts": message["command"]})
+                history.append({"role": "model", "parts": message["response"]})
+
+    print("Retrieved history:", history)
+    return history
+
+# GEMINI Interaction with History
+def initialize_chat_with_gemini(history):
+    model = genai.GenerativeModel("gemini-1.5-flash")
+    chat = model.start_chat(history=history)
+    return chat
+
+# Save or Append to Continuous Chat in Firestore
+def save_to_chat(session_id: int, command: str, response: str):
+    chat_ref = db.collection("interaction_history").document(str(session_id))  # Use numeric ID as string
+    new_message = {"timestamp": datetime.now(), "command": command, "response": response}
     chat_ref.set({"messages": firestore.ArrayUnion([new_message])}, merge=True)
-    print(f"Appended to chat session {session_id}:", new_message)
 
-
-# Retrieve Chat History
-def retrieve_chat(session_id: str):
-    """
-    Retrieve the chat history for a given session.
-    """
-    chat_ref = db.collection("interaction_history").document(session_id)
-    chat = chat_ref.get()
-    if chat.exists:
-        print(f"Retrieved chat session {session_id}:")
-        return chat.to_dict().get("messages", [])
-    else:
-        print(f"No chat found for session {session_id}.")
-        return []
-
+# Main Interaction Function
+def handle_user_command(session_id: int, command: str, chat):
+    response = chat.send_message(command)
+    save_to_chat(session_id, command, response.text)
+    print(f"Aura: {response.text}")
+    return response.text
 
 # Example Usage
 if __name__ == "__main__":
-    session_id = "session_001"  # Unique ID for a particular chat session
+    # Start a new session with an auto-incremented numeric ID
+    session_id = get_next_session_id()
 
-    # Append a new message to the chat
-    save_to_chat(session_id, "From now on, your name will be jarvis", "Copy that!")
-    save_to_chat(session_id, "Tell me a joke.",
-                 "Why did the scarecrow win an award? Because he was outstanding in his field!")
+    # Retrieve history from the last session
+    last_session_history = get_last_session_history()
 
-    # Retrieve chat history
-    chat_history = retrieve_chat(session_id)
-    for message in chat_history:
-        print(message)
+    # Initialize GEMINI chat with history
+    chat = initialize_chat_with_gemini(last_session_history)
+
+    # Process a new user command
+    while True:
+        user_command = input("Command: ")
+        if user_command == "exit":
+            break
+        handle_user_command(session_id, user_command, chat)
