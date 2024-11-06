@@ -90,12 +90,8 @@ def summarize_note(note_content):
     Returns:
         str: Summary of the note.
     """
-    model = genai.GenerativeModel("gemini-1.5-flash")
-    chat = model.start_chat(
-        history=[{"role": "user", "parts": f"Summarize the following note: {note_content}"}]
-    )
-    summary_response = chat.send_message("Please provide a concise summary.")
-    return summary_response.text
+    response = model.generate_content("Summarize the following text: " + note_content)
+    return response.text
 
 
 def delete_note(note_id):

@@ -6,6 +6,7 @@ import google.generativeai as genai
 
 # Configure Gemini API
 genai.configure(api_key=GEMINI_API_KEY)
+model = genai.GenerativeModel("gemini-1.5-flash")
 
 
 def search_web(query, num_results=5):
@@ -79,7 +80,6 @@ def summarize_results_with_gemini(results):
 
     if snippets:
         # Send the snippets to Gemini for summarization
-        model = genai.GenerativeModel("gemini-1.5-flash")
         response = model.generate_content("Summarize the following text: " + snippets)
         return response.text
     return "No content available for summarization."
