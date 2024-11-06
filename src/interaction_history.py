@@ -2,14 +2,15 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 from datetime import datetime
 import google.generativeai as genai
+from config import FIREBASE_CREDENTIALS_PATH, GEMINI_API_KEY
 
 # Initialize Firestore
-cred = credentials.Certificate(".json")
+cred = credentials.Certificate(FIREBASE_CREDENTIALS_PATH)
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
 # Configure GEMINI API
-genai.configure(api_key="")
+genai.configure(api_key=GEMINI_API_KEY)
 
 # Function to get and increment session ID
 def get_next_session_id():
