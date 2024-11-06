@@ -1,36 +1,65 @@
 import firebase_admin
 from firebase_admin import credentials, firestore
+import google.generativeai as genai
 from datetime import datetime
-from config import FIREBASE_CREDENTIALS_PATH
+from config import FIREBASE_CREDENTIALS_PATH , GEMINI_API_KEY
+import dateparser
 
 # Initialize Firestore
 cred = credentials.Certificate(FIREBASE_CREDENTIALS_PATH)
 firebase_admin.initialize_app(cred)
 db = firestore.client()
 
+# Initialize Gemini model
+genai.configure(api_key=GEMINI_API_KEY)
+model = genai.GenerativeModel("gemini-1.5-flash")
+
+# Function to infer priority and category using Gemini
+def infer_task_details(task_description):
+    # Call Gemini to infer priority and category
+
+    response = model.generate_content(f"What is the priority and category of this task? Only provide the priority (high,medium,low) as priority : and category (work, personal) as category : , nothing else, no description, no extra information. : {task_description}")
+    print(response.text)
+    # Assuming Gemini provides a response like "Priority: high, Category: work"
+    return response.text.lower()
+
 
 # Function to add a new task
-def add_task(title, category, deadline, priority):
+def add_task_from_input(task_description, deadline):
     """
-    Add a new task to the Firestore 'tasks' collection.
+        Add a new task to the Firestore 'tasks' collection.
 
-    Parameters:
-        title (str): The task description.
-        category (str): The task category, e.g., 'work' or 'personal'.
-        deadline (datetime): The deadline for the task.
-        priority (str): The priority level of the task (high, medium, low).
+        Parameters:
+            title (str): The task description.
+            category (str): The task category, e.g., 'work' or 'personal'.
+            deadline (datetime): The deadline for the task.
+            priority (str): The priority level of the task (high, medium, low).
     """
+
+    # Call Gemini to infer the task's priority and category
+    inferred_details = infer_task_details(task_description)
+
+    # If no response from Gemini or parsing error, use default values
+    if "priority" not in inferred_details or "category" not in inferred_details:
+        priority = "medium"
+        category = "personal"
+    else:
+        # Extract inferred priority and category from Gemini's response
+        priority = "high" if "high" in inferred_details else "low" if "low" in inferred_details else "medium"
+        category = "work" if "work" in inferred_details else "personal"
+
+    # Create the task with inferred or default details
     task_data = {
-        "title": title,
+        "title": task_description,
         "category": category,
         "deadline": deadline,
         "priority": priority,
         "created_at": datetime.now(),
     }
 
-    # Add task to the 'tasks' collection
+    # Add task to the 'tasks' collection in Firestore
     db.collection("tasks").add(task_data)
-    print(f"Task '{title}' added successfully.")
+    print(f"Task '{task_description}' added with priority: {priority} and category: {category}")
 
 
 # Function to retrieve tasks by priority
@@ -74,16 +103,28 @@ def get_upcoming_tasks(deadline_date):
 
     return upcoming_tasks
 
+# Function to prompt for user input
+def get_user_input():
+    task_description = input("What is the task? ")
+    deadline_input = input("When is the deadline? (e.g., 'tomorrow at 5 PM', leave blank if no deadline): ")
+
+    # Parse the deadline if provided
+    if deadline_input.strip():
+        deadline = dateparser.parse(deadline_input)
+        if not deadline:
+            print("Couldn't parse the deadline. Please try again with a specific format.")
+            return None, None
+    else:
+        deadline = None  # No deadline specified
+
+    return task_description, deadline
 
 # Example Usage
 if __name__ == "__main__":
-    # Add a task
-    add_task(
-        title="Finish project proposal",
-        category="work",
-        deadline=datetime(2024, 11, 10, 17, 0),
-        priority="low"
-    )
+
+    task_description, deadline = get_user_input()
+    if task_description and deadline:
+        add_task_from_input(task_description, deadline)
 
     # Retrieve high-priority tasks
     high_priority_tasks = get_tasks_by_priority("high")
