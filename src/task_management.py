@@ -82,6 +82,25 @@ def get_tasks_by_priority(priority):
 
     return task_list
 
+# Function to retrieve tasks by category
+def get_tasks_by_category(category):
+    """
+    Retrieve tasks from the Firestore 'tasks' collection by category.
+
+    Parameters:
+        category (str): The category level to filter by, e.g., 'work' or 'personal'.
+
+    Returns:
+        list: A list of tasks with the specified category.
+    """
+    tasks = db.collection("tasks").where("category", "==", category).stream()
+    task_list = [task.to_dict() for task in tasks]
+
+    print(f"Tasks with category '{category}':")
+    for task in task_list:
+        print(f"- {task['title']} (Deadline: {task['deadline']}, Priority: {task['priority']})")
+
+    return task_list
 
 # Function to retrieve tasks by deadline
 def get_upcoming_tasks(deadline_date):
@@ -99,7 +118,7 @@ def get_upcoming_tasks(deadline_date):
 
     print("Upcoming tasks:")
     for task in upcoming_tasks:
-        print(f"- {task['title']} (Deadline: {task['deadline']}, Priority: {task['priority']})")
+        print(f"- {task['title']} (Deadline: {task['deadline']}, Priority: {task['priority']} Category: {task['category']})")
 
     return upcoming_tasks
 
@@ -128,6 +147,7 @@ if __name__ == "__main__":
 
     # Retrieve high-priority tasks
     high_priority_tasks = get_tasks_by_priority("high")
+    category_tasks = get_tasks_by_category("work")
 
     # Retrieve upcoming tasks with a deadline before a certain date
     upcoming_tasks = get_upcoming_tasks(datetime(2024, 11, 12))
