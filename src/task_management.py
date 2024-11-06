@@ -118,7 +118,7 @@ def get_upcoming_tasks(deadline_date):
 
     print("Upcoming tasks:")
     for task in upcoming_tasks:
-        print(f"- {task['title']} (Deadline: {task['deadline']}, Priority: {task['priority']} Category: {task['category']})")
+        print(f"- {task['title']} (Deadline: {task['deadline']}, Priority: {task['priority']}, Category: {task['category']})")
 
     return upcoming_tasks
 
