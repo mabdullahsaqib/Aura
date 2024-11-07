@@ -177,7 +177,7 @@ def classify_document(file_name, base_folder_name, target_folder_name):
             return None
 
 
-def retrieve_document(base_folder_name, target_folder_name, document_name):
+def retrieve_document(document_name, base_folder_name, target_folder_name):
     """
     Retrieves the path of a specific document within a target folder in a base folder.
 
@@ -189,13 +189,35 @@ def retrieve_document(base_folder_name, target_folder_name, document_name):
     Returns:
         Path: The path of the document if found, or None if not found.
     """
-    documents = list_documents(base_folder_name, target_folder_name)
-    for doc in documents:
-        if doc.name.lower() == document_name.lower():
-            print(f"Document '{document_name}' found at '{doc}'.")
-            return doc
-    print(f"Document '{document_name}' not found in '{target_folder_name}'.")
-    return None
+
+    base_directory = COMMON_FOLDERS.get(base_folder_name.lower(), Path(base_folder_name))
+
+    if not base_directory.exists():
+        print(f"Base directory '{base_directory}' does not exist.")
+        return
+
+    if base_folder_name == target_folder_name:
+        target_path = base_directory
+    else:
+        # Search for the target folder within the base directory
+        target_path = find_folder(base_directory, target_folder_name)
+
+    if target_path:
+        document_path = target_path / document_name
+        if document_path.exists():
+            try:
+                 with open(document_path, "r") as file:
+                    content = file.read()
+                 print(f"\nContent of '{document_name}':\n{content}")
+                 return content
+
+            except FileNotFoundError:
+                print(f"Document '{document_name}' not found at {target_path}.")
+                return None
+
+        else:
+            print(f"Document '{document_name}' not found in '{target_path}'.")
+            return None
 
 
 def find_folder(base_directory, target_folder_name):
@@ -217,7 +239,7 @@ def find_folder(base_directory, target_folder_name):
     return None
 
 
-def move_document(file_name, base_folder_name, target_folder_name):
+def move_document(file_name, current_base_folder_name, current_folder_name ,target_base_folder_name, target_folder_name):
     """
     Moves a document to a target folder, searching within a base folder.
 
@@ -226,30 +248,47 @@ def move_document(file_name, base_folder_name, target_folder_name):
         base_folder_name (str): The name of the base folder to start searching from.
         target_folder_name (str): The name of the folder to move the file into.
     """
-    # Get the base directory path from COMMON_FOLDERS
-    base_directory = COMMON_FOLDERS.get(base_folder_name.lower(), Path(base_folder_name))
 
-    if not base_directory.exists():
-        print(f"Base directory '{base_directory}' does not exist.")
+    current_base_directory = COMMON_FOLDERS.get(current_base_folder_name.lower(), Path(current_base_folder_name))
+
+    if not current_base_directory.exists():
+        print(f"Base directory '{current_base_directory}' does not exist.")
         return
 
+    if current_base_folder_name == current_folder_name:
+        file_path = current_base_directory / file_name
+    else:
+        #search for the file in the current folder
+        current_path = find_folder(current_base_directory, current_folder_name)
+        if current_path:
+            file_path = current_path / file_name
+        else:
+            print(f"Document '{file_name}' not found in '{current_base_directory}'.")
+            return
 
-    if base_folder_name == target_folder_name:
-        target_path = base_directory
+    target_base_directory = COMMON_FOLDERS.get(target_base_folder_name.lower(), Path(target_base_folder_name))
+
+    if not target_base_directory.exists():
+        print(f"Base directory '{target_base_directory}' does not exist.")
+        return
+
+    if target_base_folder_name == target_folder_name:
+        target_path = target_base_directory
     else:
         # Search for the target folder within the base directory
-        target_path = find_folder(base_directory, target_folder_name)
+        target_path = find_folder(target_base_directory, target_folder_name)
+
 
     if target_path:
         try:
-            shutil.move(file_name, target_path / Path(file_name).name)
+            shutil.move(file_path, target_path / Path(file_name).name)
             print(f"Document '{file_name}' moved to '{target_path}' successfully.")
         except FileNotFoundError:
             print(f"Document '{file_name}' not found.")
         except Exception as e:
             print(f"An error occurred while moving the document: {e}")
     else:
-        print(f"Target folder '{target_folder_name}' could not be located within '{base_directory}'.")
+        print(f"Target folder '{target_folder_name}' not found.")
 
 
 def list_documents(base_folder_name, target_folder_name):
@@ -264,7 +303,16 @@ def list_documents(base_folder_name, target_folder_name):
         list: A list of document paths within the target folder.
     """
     base_directory = COMMON_FOLDERS.get(base_folder_name.lower(), Path(base_folder_name))
-    target_path = find_folder(base_directory, target_folder_name)
+
+    if not base_directory.exists():
+        print(f"Base directory '{base_directory}' does not exist.")
+        return
+
+    if base_folder_name == target_folder_name:
+        target_path = base_directory
+    else:
+        # Search for the target folder within the base directory
+        target_path = find_folder(base_directory, target_folder_name)
 
     if target_path and target_path.exists():
         documents = [file for file in target_path.iterdir() if file.is_file()]
@@ -319,15 +367,17 @@ def main():
 
         elif choice == "move":
             file_name = input("Enter the name of the file to move: ")
-            base_folder = input("Enter the base folder name: ")
+            current_base_folder = input("Enter the base folder name in which the file currently is : ")
+            current_folder = input("Enter the folder name in which the file currently is : ")
+            target_base_folder = input("Enter the base folder name in which the file is to be moved : ")
             target_folder = input("Enter the target folder name: ")
-            move_document(file_name, base_folder, target_folder)
+            move_document(file_name, current_base_folder, current_folder, target_base_folder, target_folder)
 
         elif choice == "retrieve":
+            document_name = input("Enter the name of the document to retrieve: ")
             base_folder = input("Enter the base folder name: ")
             target_folder = input("Enter the target folder name: ")
-            document_name = input("Enter the name of the document to retrieve: ")
-            retrieve_document(base_folder, target_folder, document_name)
+            retrieve_document(document_name, base_folder, target_folder)
 
         elif choice == "list":
             base_folder = input("Enter the base folder name: ")

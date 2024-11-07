@@ -230,7 +230,7 @@
       <workItem from="1730902748945" duration="55000" />
       <workItem from="1730904008811" duration="935000" />
       <workItem from="1730905784798" duration="927000" />
-      <workItem from="1730952001776" duration="3068000" />
+      <workItem from="1730952001776" duration="5397000" />
     </task>
     <task id="LOCAL-00001" summary="added session history">
       <option name="closed" value="true" />
@@ -272,7 +272,7 @@
     <SUITE FILE_PATH="coverage/Aura$web_browsing.coverage" NAME="web_browsing Coverage Results" MODIFIED="1730904470598" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
     <SUITE FILE_PATH="coverage/Aura$interaction_history__1_.coverage" NAME="interaction_history (1) Coverage Results" MODIFIED="1730897802544" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
     <SUITE FILE_PATH="coverage/Aura$session_history.coverage" NAME="interaction_history Coverage Results" MODIFIED="1730897933652" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
-    <SUITE FILE_PATH="coverage/Aura$document_management.coverage" NAME="document_management Coverage Results" MODIFIED="1730953883532" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
+    <SUITE FILE_PATH="coverage/Aura$document_management.coverage" NAME="document_management Coverage Results" MODIFIED="1730957397099" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
     <SUITE FILE_PATH="coverage/Aura$main.coverage" NAME="main Coverage Results" MODIFIED="1730897794730" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Aura$note_taking.coverage" NAME="note_taking Coverage Results" MODIFIED="1730904425663" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
     <SUITE FILE_PATH="coverage/Aura$gemini.coverage" NAME="gemini Coverage Results" MODIFIED="1730622793932" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
