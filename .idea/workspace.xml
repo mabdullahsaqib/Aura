@@ -5,7 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d6a46a99-3744-4c5c-bb6d-cb97ef0c774f" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/personalized_recommendations.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -31,35 +31,35 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_MARK_IGNORED_FILES_AS_EXCLUDED": "true",
-    "Python.advanced_notfilications.executor": "Run",
-    "Python.custom_commands.executor": "Run",
-    "Python.document_management.executor": "Run",
-    "Python.email_management.executor": "Run",
-    "Python.gemini.executor": "Run",
-    "Python.interaction_history (1).executor": "Run",
-    "Python.interaction_history.executor": "Run",
-    "Python.main.executor": "Run",
-    "Python.note_taking.executor": "Run",
-    "Python.personalized_recommendations.executor": "Run",
-    "Python.realtime_translation.executor": "Run",
-    "Python.session_history.executor": "Run",
-    "Python.task_management.executor": "Run",
-    "Python.weather_and_news.executor": "Run",
-    "Python.web_browsing.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "preferences.pluginManager",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_MARK_IGNORED_FILES_AS_EXCLUDED&quot;: &quot;true&quot;,
+    &quot;Python.advanced_notfilications.executor&quot;: &quot;Run&quot;,
+    &quot;Python.custom_commands.executor&quot;: &quot;Run&quot;,
+    &quot;Python.document_management.executor&quot;: &quot;Run&quot;,
+    &quot;Python.email_management.executor&quot;: &quot;Run&quot;,
+    &quot;Python.gemini.executor&quot;: &quot;Run&quot;,
+    &quot;Python.interaction_history (1).executor&quot;: &quot;Run&quot;,
+    &quot;Python.interaction_history.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.note_taking.executor&quot;: &quot;Run&quot;,
+    &quot;Python.personalized_recommendations.executor&quot;: &quot;Run&quot;,
+    &quot;Python.realtime_translation.executor&quot;: &quot;Run&quot;,
+    &quot;Python.session_history.executor&quot;: &quot;Run&quot;,
+    &quot;Python.task_management.executor&quot;: &quot;Run&quot;,
+    &quot;Python.weather_and_news.executor&quot;: &quot;Run&quot;,
+    &quot;Python.web_browsing.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\Administrator\Documents\PyCharm\Aura" />
@@ -239,6 +239,7 @@
       <workItem from="1730952001776" duration="8770000" />
       <workItem from="1731037579120" duration="6247000" />
       <workItem from="1731046623689" duration="2759000" />
+      <workItem from="1731072318650" duration="523000" />
     </task>
     <task id="LOCAL-00001" summary="added session history">
       <option name="closed" value="true" />

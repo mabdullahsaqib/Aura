@@ -50,9 +50,7 @@ def recommend_tasks(user_id):
     # Filter high-priority or urgent tasks
     recommended_tasks = [
         task for task in tasks if task.get("priority") == "high" or
-                                  (task.get("deadline") and datetime.strptime(task["deadline"],
-                                                                              "%Y-%m-%d %H:%M") < datetime.now() + timedelta(
-                                      days=1))
+                                  (task.get("deadline") and datetime.strptime(task["deadline"],"%Y-%m-%d %H:%M") < datetime.now() + timedelta(days=1))
     ]
     return recommended_tasks if recommended_tasks else ["No urgent tasks!"]
 
@@ -61,10 +59,6 @@ def general_recommendations(user_id):
     preferences = fetch_preferences(user_id)
     if not preferences:
         return "Welcome! Set some preferences to get personalized recommendations."
-
-    # Example greeting based on weather interest
-    if "weather_updates" in preferences and preferences["weather_updates"]:
-        return "Would you like the latest weather update?"
 
     # Use Gemini to suggest personalized recommendations
     try:
@@ -77,10 +71,10 @@ def general_recommendations(user_id):
 
 # Example usage
 if __name__ == "__main__":
-    user_id = "example_user"
+    user_id = "teuff"
 
     # Set preferences
-    update_preferences(user_id, "news_category", "technology")
+    update_preferences(user_id, "news_category", "entertainment")
     update_preferences(user_id, "weather_updates", True)
 
     # Recommend based on preferences
