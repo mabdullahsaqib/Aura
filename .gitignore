@@ -162,3 +162,5 @@ cython_debug/
 #.idea/
 /credentials.json
 /credentials_c.json
+/gmail_credentials.json
+/token.json
