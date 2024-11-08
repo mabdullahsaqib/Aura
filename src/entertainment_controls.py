@@ -19,7 +19,7 @@ youtube = build("youtube", "v3", developerKey=YOUTUBE_API_KEY)
 # Local Media Playback with Subprocess
 def play_local_media(file_path):
     if os.path.isfile(file_path):
-        subprocess.Popen(['open', file_path] if os.name == 'posix' else ['start', file_path], shell=True)
+        subprocess.Popen(['start', file_path] , shell=True)
     else:
         print("File does not exist:", file_path)
 
@@ -68,8 +68,8 @@ if __name__ == "__main__":
     # Local Media Example
     play_local_media("C:/Users/Administrator/Music/My List/AFSANAY Song Mp3 Download Young Stunners.mp3")
 
-    # YouTube Example
-    open_youtube_video("Relaxing music")
-
-    # Spotify Example
-    play_spotify_track("Shape of You")
+    # # YouTube Example
+    # open_youtube_video("Relaxing music")
+    #
+    # # Spotify Example
+    # play_spotify_track("Shape of You")
