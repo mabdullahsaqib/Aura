@@ -80,8 +80,8 @@ def handle_command(command, input_text=None):
             play_spotify_track(input_text.replace("play", "").replace("on spotify", "").strip())
         elif "youtube" in input_text.lower():
             open_youtube_video(input_text.replace("play", "").replace("on youtube", "").strip())
-        else:
-            play_local_media(input_text.strip())
+        elif "local" in input_text.lower():
+            play_local_media(input_text.replace("play", "").replace("on local", "").strip())
 
     elif command == "pause":
         pause_spotify()
