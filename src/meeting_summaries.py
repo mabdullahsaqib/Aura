@@ -3,13 +3,12 @@ import pyttsx3
 import speech_recognition as sr
 import whisper
 from firebase_admin import firestore
-
 from config import GEMINI_API_KEY
 
 # Initialize recognizer and text-to-speech
 recognizer = sr.Recognizer()
 engine = pyttsx3.init()
-engine.setProperty('rate', 150)  # Adjust speaking rate if needed
+engine.setProperty('rate', 250)  # Adjust speaking rate if needed
 
 # Initialize Firestore
 db = firestore.client()
@@ -18,8 +17,10 @@ db = firestore.client()
 genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel("gemini-1.5-flash")
 
+whisper_model = None
 # Initialize Whisper Model
-whisper_model = whisper.load_model("base")
+def load_model():
+    whisper_model = whisper.load_model("base")
 
 
 # Transcribe Audio Function
@@ -50,6 +51,7 @@ def store_summary(meeting_title, transcript, summary):
 
 # Main Function to Transcribe, Summarize, and Store
 def process_meeting_summary(file_path, meeting_title):
+    load_model()
     print("Transcribing audio...")
     transcript = transcribe_audio(file_path)
     print("Transcription complete. Summarizing text...")
@@ -69,22 +71,25 @@ def speak(text):
 def listen():
     with sr.Microphone() as source:
         print("Listening...")
-        audio = recognizer.listen(source)
-    try:
-        return recognizer.recognize_google(audio)
-    except sr.UnknownValueError:
-        speak("I didn't catch that.")
-        return ""
-    except sr.RequestError:
-        speak("Voice service unavailable.")
-        return ""
-
+        while True:
+            audio = recognizer.listen(source, timeout=3)
+            try:
+                return recognizer.recognize_google(audio)
+            except sr.WaitTimeoutError:
+                continue
+            except sr.UnknownValueError:
+                speak("I didn't catch that.")
+                continue
+            except sr.RequestError:
+                speak("Voice service unavailable.")
+                return ""
 
 def meeting_summary_voice_interaction():
     """
     Handles the meeting summary command.
     Asks user for the audio file and processes the meeting summary.
     """
+
     speak("What's the name of the audio file?")
     audio_file = listen()
     if audio_file:

@@ -8,7 +8,7 @@ from config import GEMINI_API_KEY
 # Initialize recognizer and text-to-speech
 recognizer = sr.Recognizer()
 engine = pyttsx3.init()
-engine.setProperty('rate', 150)  # Adjust speaking rate if needed
+engine.setProperty('rate', 250)  # Adjust speaking rate if needed
 
 # Initialize Firestore
 db = firestore.client()
@@ -157,16 +157,18 @@ def speak(text):
 def listen():
     with sr.Microphone() as source:
         print("Listening...")
-        audio = recognizer.listen(source)
-    try:
-        return recognizer.recognize_google(audio)
-    except sr.UnknownValueError:
-        speak("I didn't catch that.")
-        return ""
-    except sr.RequestError:
-        speak("Voice service unavailable.")
-        return ""
-
+        while True:
+            audio = recognizer.listen(source, timeout=3)
+            try:
+                return recognizer.recognize_google(audio)
+            except sr.WaitTimeoutError:
+                continue
+            except sr.UnknownValueError:
+                speak("I didn't catch that.")
+                continue
+            except sr.RequestError:
+                speak("Voice service unavailable.")
+                return ""
 
 def note_voice_interaction(choice):
     if "add" in choice:

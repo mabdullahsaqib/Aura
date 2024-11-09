@@ -15,7 +15,7 @@ from config import GEMINI_API_KEY, GMAIL_CREDENTIALS_PATH, GMAIL_TOKEN_PATH
 # Initialize recognizer and text-to-speech
 recognizer = sr.Recognizer()
 engine = pyttsx3.init()
-engine.setProperty('rate', 150)  # Adjust speaking rate if needed
+engine.setProperty('rate', 250)  # Adjust speaking rate if needed
 
 # Define the Gmail API scope
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly',
@@ -130,16 +130,18 @@ def speak(text):
 def listen():
     with sr.Microphone() as source:
         print("Listening...")
-        audio = recognizer.listen(source)
-    try:
-        return recognizer.recognize_google(audio)
-    except sr.UnknownValueError:
-        speak("I didn't catch that.")
-        return ""
-    except sr.RequestError:
-        speak("Voice service unavailable.")
-        return ""
-
+        while True:
+            audio = recognizer.listen(source, timeout=3)
+            try:
+                return recognizer.recognize_google(audio)
+            except sr.WaitTimeoutError:
+                continue
+            except sr.UnknownValueError:
+                speak("I didn't catch that.")
+                continue
+            except sr.RequestError:
+                speak("Voice service unavailable.")
+                return ""
 
 # Example usage
 def email_voice_interaction(command):

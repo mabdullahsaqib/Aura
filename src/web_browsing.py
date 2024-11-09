@@ -8,7 +8,7 @@ from config import GOOGLE_API_KEY, GOOGLE_CSE_ID, GEMINI_API_KEY
 # Initialize recognizer and text-to-speech
 recognizer = sr.Recognizer()
 engine = pyttsx3.init()
-engine.setProperty('rate', 150)  # Adjust speaking rate if needed
+engine.setProperty('rate', 250)  # Adjust speaking rate if needed
 
 # Configure Gemini API
 genai.configure(api_key=GEMINI_API_KEY)
