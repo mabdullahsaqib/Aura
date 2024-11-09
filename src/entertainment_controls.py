@@ -91,27 +91,30 @@ def handle_command(command, input_text=None):
         elif "local" in input_text.lower():
             play_local_media(input_text.replace("play", "").replace("on local", "").strip())
 
-    elif command == "pause":
+    elif "pause" in command:
         pause_spotify()
 
-    elif command == "resume":
+    elif "resume" in command:
         resume_spotify()
 
-    elif command == "skip":
+    elif "skip" in command:
         skip_spotify_track()
 
-    elif command == "previous":
+    elif "previous" in command:
         previous_spotify_track()
 
-    elif command == "seek":
+    elif "seek" in command:
         try:
+            speak("Tell the position to seek to :")
             if input_text.isdigit():
                 minutes = input_text[0]  # Extract time in seconds from input
-                seconds = input_text[1] if len(input_text) > 1 else 0
+                seconds = input_text[1:] if len(input_text) > 1 else 0
                 seconds = int(minutes) * 60 + int(seconds)
             else:
+                input_text = input_text.split()
                 minutes = w2n.word_to_num(input_text[0])
-                seconds = w2n.word_to_num(input_text[1])
+                s = ' '.join(input_text[1:])
+                seconds = w2n.word_to_num(s)
                 seconds = minutes * 60 + seconds
 
             sp.seek_track(seconds * 1000)  # Spotify API uses milliseconds
@@ -130,15 +133,16 @@ def speak(text):
 
 def listen():
     with sr.Microphone() as source:
-        print("Listening...")
         while True:
-            audio = recognizer.listen(source, timeout=3)
+            print("Listening...")
+            audio = recognizer.listen(source)
             try:
-                return recognizer.recognize_google(audio)
+                command = recognizer.recognize_google(audio)
+                print("Command : " + command )
+                return command
             except sr.WaitTimeoutError:
                 continue
             except sr.UnknownValueError:
-                speak("I didn't catch that.")
                 continue
             except sr.RequestError:
                 speak("Voice service unavailable.")
@@ -153,14 +157,11 @@ def entertainment_control_voice_interaction():
 
     handle_command("play", media_name + " on " + platform)
 
-    input_text = ""
-    while True:
-        command = listen()
-        if command is None:
-            continue
-        if command == "seek":
-            speak("Tell the position to seek to :")
-            input_text = listen().split()
-        if command == "exit":
-            break
-        handle_command(command, input_text)
+    if "spotify" in platform.lower():
+        while True:
+            command = listen()
+            if command is None:
+                continue
+            if command == "exit":
+                break
+            handle_command(command)

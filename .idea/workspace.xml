@@ -5,7 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="d6a46a99-3744-4c5c-bb6d-cb97ef0c774f" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/custom_commands.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/custom_commands.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/document_management.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/document_management.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/email_management.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/email_management.py" afterDir="false" />
@@ -59,6 +58,7 @@
     "Python.realtime_translation.executor": "Run",
     "Python.session_history.executor": "Run",
     "Python.task_management.executor": "Run",
+    "Python.test.executor": "Run",
     "Python.voice_interaction.executor": "Run",
     "Python.weather_and_news.executor": "Run",
     "Python.web_browsing.executor": "Run",
@@ -79,7 +79,7 @@
       <recent name="C:\Users\Administrator\Documents\PyCharm\Aura\src" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.voice_interaction">
+  <component name="RunManager" selected="Python.test">
     <configuration name="entertainment_controls" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Aura" />
       <option name="ENV_FILES" value="" />
@@ -172,7 +172,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="personalized_recommendations" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="test" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="Aura" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -186,7 +186,7 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/personalized_recommendations.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/test.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -220,11 +220,11 @@
     </configuration>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.test" />
         <item itemvalue="Python.voice_interaction" />
         <item itemvalue="Python.note_taking" />
         <item itemvalue="Python.meeting_summaries" />
         <item itemvalue="Python.entertainment_controls" />
-        <item itemvalue="Python.personalized_recommendations" />
       </list>
     </recent_temporary>
   </component>
@@ -255,7 +255,7 @@
       <workItem from="1731072318650" duration="12127000" />
       <workItem from="1731086952167" duration="174000" />
       <workItem from="1731124300191" duration="5716000" />
-      <workItem from="1731151118632" duration="10723000" />
+      <workItem from="1731151118632" duration="12191000" />
     </task>
     <task id="LOCAL-00001" summary="added session history">
       <option name="closed" value="true" />
@@ -301,6 +301,7 @@
     <SUITE FILE_PATH="coverage/Aura$advanced_notfilications.coverage" NAME="advanced_notfilications Coverage Results" MODIFIED="1731039680711" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
     <SUITE FILE_PATH="coverage/Aura$interaction_history__1_.coverage" NAME="interaction_history (1) Coverage Results" MODIFIED="1730897802544" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
     <SUITE FILE_PATH="coverage/Aura$weather_and_news.coverage" NAME="weather_and_news Coverage Results" MODIFIED="1731049158461" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
+    <SUITE FILE_PATH="coverage/Aura$test.coverage" NAME="test Coverage Results" MODIFIED="1731164094908" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
     <SUITE FILE_PATH="coverage/Aura$gemini.coverage" NAME="gemini Coverage Results" MODIFIED="1730622793932" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
     <SUITE FILE_PATH="coverage/Aura$meeting_summaries.coverage" NAME="meeting_summaries Coverage Results" MODIFIED="1731086256878" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
     <SUITE FILE_PATH="coverage/Aura$personalized_recommendations.coverage" NAME="personalized_recommendations Coverage Results" MODIFIED="1731074190504" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
@@ -309,7 +310,7 @@
     <SUITE FILE_PATH="coverage/Aura$document_management.coverage" NAME="document_management Coverage Results" MODIFIED="1730957397099" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
     <SUITE FILE_PATH="coverage/Aura$main.coverage" NAME="main Coverage Results" MODIFIED="1730897794730" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/Aura$note_taking.coverage" NAME="note_taking Coverage Results" MODIFIED="1731153473647" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
-    <SUITE FILE_PATH="coverage/Aura$voice_interaction.coverage" NAME="voice_interaction Coverage Results" MODIFIED="1731162547116" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
+    <SUITE FILE_PATH="coverage/Aura$voice_interaction.coverage" NAME="voice_interaction Coverage Results" MODIFIED="1731163232031" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
     <SUITE FILE_PATH="coverage/Aura$task_management.coverage" NAME="task_management Coverage Results" MODIFIED="1730898053288" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/src" />
   </component>
 </project>

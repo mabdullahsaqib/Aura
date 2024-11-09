@@ -81,19 +81,21 @@ def speak(text):
 
 def listen():
     with sr.Microphone() as source:
-        print("Listening...")
         while True:
-            audio = recognizer.listen(source, timeout=3)
+            print("Listening...")
+            audio = recognizer.listen(source)
             try:
-                return recognizer.recognize_google(audio)
+                command = recognizer.recognize_google(audio)
+                print("Command : " + command )
+                return command
             except sr.WaitTimeoutError:
                 continue
             except sr.UnknownValueError:
-                speak("I didn't catch that.")
                 continue
             except sr.RequestError:
                 speak("Voice service unavailable.")
                 return ""
+
 
 # Function to handle voice commands for Weather and News
 def weather_and_news_voice_interaction(command):
