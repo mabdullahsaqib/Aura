@@ -39,9 +39,9 @@ def authenticate_gmail():
             token.write(creds.to_json())
     return creds
 
-def fetch_emails(service):
+def fetch_emails(service, max_results = 5):
     try:
-        results = service.users().messages().list(userId='me', maxResults=5).execute()
+        results = service.users().messages().list(userId='me', maxResults = max_results).execute()
         messages = results.get('messages', [])
 
         if not messages:
@@ -138,21 +138,21 @@ def email_voice_interaction(command):
     creds = authenticate_gmail()
     service = build('gmail', 'v1', credentials=creds)
 
-    if "fetch" in command or "emails" in command:
-        fetch_emails(service)
-    elif "send" in command and "email" in command:
-        # Assuming user provides the email, subject, and message in the command
-        # Example: "Send an email to example@test.com with subject Test and message Hello"
-        to_email = "example@test.com"
-        subject = "Test"
-        message_text = "Hello"
+    if "fetch" in command or "emails" in command or "mails" in command or "inbox" in command:
+        fetch_emails(service, 10)
+    elif ("send" in command or "compose" in command or "write" in command) and ("email" in command or "mail" in command):
+        speak("Who is the recipient?")
+        to_email = listen()
+        speak("What is the subject?")
+        subject = listen()
+        speak("What should I say?")
+        message_text = listen()
         send_email(service, to_email, subject, message_text)
-    elif "summarize" in command and "email" in command:
-        email_id = "example_email_id"  # Fetch email ID dynamically
+    elif "summarize" in command and ("email" in command or "mail" in command):
+        speak("What is the email ID?")
+        email_id = listen()
         summarize_email(service, email_id)
-    elif "reply" in command and "email" in command:
-        email_id = "example_email_id"  # Fetch email ID dynamically
+    elif "reply" in command and ("email" in command or "mail" in command):
+        speak("What is the email ID?")
+        email_id = listen()
         send_email_with_generated_response(service, email_id)
-
-if __name__ == "__main__":
-    email_voice_interaction("fetch emails")

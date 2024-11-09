@@ -2,15 +2,21 @@ import os
 import shutil
 from pathlib import Path
 import google.generativeai as genai
-from config import GEMINI_API_KEY
+from config import GEMINI_API_KEY, FIREBASE_CREDENTIALS_PATH
 import speech_recognition as sr
 import pyttsx3
+import firebase_admin
+from firebase_admin import credentials, firestore
 
 # Initialize recognizer and text-to-speech
 recognizer = sr.Recognizer()
 engine = pyttsx3.init()
 engine.setProperty('rate', 150)  # Adjust speaking rate if needed
 
+# Initialize Firestore
+cred = credentials.Certificate(FIREBASE_CREDENTIALS_PATH)
+firebase_admin.initialize_app(cred)
+db = firestore.client()
 
 # Initialize Gemini
 genai.configure(api_key=GEMINI_API_KEY)
@@ -352,18 +358,14 @@ def listen():
         return ""
 
 
-def document_voice_interaction():
-    speak("Welcome to the Document Management module. How can I assist you?")
-
-    while True:
-        command = listen().lower()
+def document_management_voice_interaction(command):
 
         if "create" in command:
             speak("What is the name of the file?")
             file_name = listen().lower()
             speak("What content would you like to add to the file?")
             content = listen().lower()
-            speak("Which base folder should I place this in?")
+            speak("Which base folder is the target folder in?")
             base_folder = listen().lower()
             speak("What target folder should I use?")
             target_folder = listen().lower()
@@ -375,7 +377,7 @@ def document_voice_interaction():
             file_name = listen().lower()
             speak("What new content would you like to append?")
             new_content = listen().lower()
-            speak("Which base folder is this document in?")
+            speak("Which base folder is the target folder or document in?")
             base_folder = listen().lower()
             speak("What target folder is this document in?")
             target_folder = listen().lower()
@@ -385,7 +387,7 @@ def document_voice_interaction():
         elif "delete" in command:
             speak("What is the name of the file to delete?")
             file_name = listen().lower()
-            speak("Which base folder is this document in?")
+            speak("Which base folder is the target folder or this document in?")
             base_folder = listen().lower()
             speak("What target folder is this document in?")
             target_folder = listen().lower()
@@ -429,7 +431,7 @@ def document_voice_interaction():
         elif "retrieve" in command:
             speak("What is the name of the document to retrieve?")
             document_name = listen().lower()
-            speak("Which base folder is this document in?")
+            speak("Which base folder is the target folder or document in?")
             base_folder = listen().lower()
             speak("What target folder is this document in?")
             target_folder = listen().lower()
@@ -444,12 +446,5 @@ def document_voice_interaction():
             list_documents(base_folder, target_folder)
             speak("Listing documents complete.")
 
-        elif "exit" in command:
-            speak("Exiting Document Management module.")
-            break
         else:
             speak("I didn't understand that command. Please try again.")
-
-
-if __name__ == "__main__":
-    document_voice_interaction()

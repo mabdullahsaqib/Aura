@@ -22,6 +22,16 @@ db = firestore.client()
 genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel("gemini-1.5-flash")
 
+def get_next_note_id():
+    """
+    Retrieve and increment the note ID from a dedicated counter document in Firestore.
+    """
+    counter_ref = db.collection("metadata").document("note_counter")
+    counter_doc = counter_ref.get()
+    current_id = counter_doc.to_dict().get("count", 0) if counter_doc.exists else 0
+    next_id = current_id + 1
+    counter_ref.set({"count": next_id})  # Update the counter in Firestore
+    return next_id  # Use plain numeric ID
 
 def add_note(title, content, tags=None):
     """
@@ -32,7 +42,8 @@ def add_note(title, content, tags=None):
         content (str): The content of the note.
         tags (list of str): Optional tags for the note.
     """
-    note_ref = db.collection("notes").document()
+    note_id = get_next_note_id()
+    note_ref = db.collection("notes").document(str(note_id))
     note_data = {
         "note_id": note_ref.id,
         "title": title,
@@ -44,7 +55,7 @@ def add_note(title, content, tags=None):
     print("Note added successfully!")
 
 
-def retrieve_notes(keyword=None, tag=None, date_range=None):
+def retrieve_notes(note_id= None, keyword=None, tag=None, date_range=None):
     """
     Retrieves notes based on a keyword, tag, or date range.
 
@@ -57,6 +68,11 @@ def retrieve_notes(keyword=None, tag=None, date_range=None):
         list: List of notes matching the criteria.
     """
     query = db.collection("notes")
+
+    if note_id:
+        query = query.where("note_id", "==", note_id)
+        return [note.to_dict() for note in query.stream()]
+
 
     if tag:
         query = query.where("tags", "array_contains", tag)
@@ -153,13 +169,7 @@ def listen():
         speak("Voice service unavailable.")
         return ""
 
-def note_voice_interaction():
-    speak(
-        "Welcome to Aura's Note-Taking Module. You can add, retrieve, summarize, delete, or edit notes. Say 'exit' to leave.")
-
-    while True:
-        speak("What would you like to do?")
-        choice = listen().lower()
+def note_voice_interaction(choice):
 
         if "add" in choice:
             speak("Please say the note title.")
@@ -176,18 +186,22 @@ def note_voice_interaction():
             speak("Note added successfully.")
 
         elif "retrieve" in choice and "all" not in choice:
+            speak("Please say the note ID to retrieve or leave blank.")
+            note_id = listen() or None
             speak("Please say a keyword or leave blank.")
             keyword = listen() or None
             speak("Please say a tag to filter by, or leave blank.")
             tag = listen() or None
-            notes = retrieve_notes(keyword=keyword, tag=tag)
+            notes = retrieve_notes(note_id=note_id ,keyword=keyword, tag=tag)
+            speak("Notes retrieved. Check the console for details.")
             for note in notes:
-                speak(f"Note ID: {note['note_id']}, Title: {note['title']}, Content: {note['content']}")
+                print(f"Note ID: {note['note_id']}, Title: {note['title']}, Content: {note['content']}")
 
         elif "retrieve all" in choice:
             notes = retrieve_all_notes()
+            speak("All notes retrieved. Check the console for details.")
             for note in notes:
-                speak(f"Note ID: {note['note_id']}, Title: {note['title']}")
+                print(f"Note ID: {note['note_id']}, Title: {note['title']}")
 
         elif "summarize" in choice:
             speak("Please say the note ID to summarize.")
@@ -195,7 +209,8 @@ def note_voice_interaction():
             note = db.collection("notes").document(note_id).get()
             if note.exists:
                 summary = summarize_note(note.to_dict()["content"])
-                speak(f"Summary: {summary}")
+                speak("Note summarized. Check the console for details.")
+                print(f"Summary: {summary}")
             else:
                 speak("Note not found.")
 
@@ -225,12 +240,6 @@ def note_voice_interaction():
             edit_note(note_id, new_title, new_content, new_tags)
             speak("Note edited successfully.")
 
-        elif "exit" in choice:
-            speak("Exiting the Note-Taking Module.")
-            break
-
         else:
             speak("Option not recognized, please try again.")
 
-if __name__ == "__main__":
-    note_voice_interaction()

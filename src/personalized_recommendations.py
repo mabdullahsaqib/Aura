@@ -81,13 +81,9 @@ def recommendations_voice_interaction(command):
         tasks = recommend_tasks(user_id)
         return f"Here are some tasks you can focus on: {tasks}"
 
-    elif "general recommendation" in command.lower():
+    elif "recommendations" in command.lower() or "personalized" in command.lower() or "recommendation" in command.lower():
         recommendation = general_recommendations(user_id)
         return recommendation
 
     else:
         return "Sorry, I didn't quite catch that. Please specify if you want news, tasks, or general recommendations."
-
-# Example usage
-if __name__ == "__main__":
-    recommendations_voice_interaction("Recommend tasks")

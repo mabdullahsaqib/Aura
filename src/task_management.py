@@ -86,7 +86,7 @@ def get_tasks_by_category(category):
 
     speak(f"Tasks in category '{category}':")
     for task in task_list:
-        speak(f"{task['title']} with priority {task['priority']}")
+        speak(f"{task['title']} with deadline on {task['deadline']}")
     return task_list
 
 
@@ -100,43 +100,30 @@ def get_upcoming_tasks(deadline_date):
     return upcoming_tasks
 
 
-def task_voice_interaction():
-    speak(
-        "Task Management module activated. You can add a task, get tasks by priority, category, or view upcoming tasks. Say 'exit' to leave.")
-    while True:
-        command = listen().lower()
+def task_voice_interaction(command):
+    if "add" in command:
+        speak("What is the task description?")
+        task_description = listen()
+        speak("What is the deadline?")
+        deadline_input = listen()
+        deadline = dateparser.parse(deadline_input) if deadline_input else None
+        add_task_from_input(task_description, deadline)
 
-        if "add task" in command:
-            speak("What is the task description?")
-            task_description = listen()
-            speak("What is the deadline?")
-            deadline_input = listen()
-            deadline = dateparser.parse(deadline_input) if deadline_input else None
-            add_task_from_input(task_description, deadline)
+    elif "priority" in command:
+        speak("What priority level would you like to check? (high, medium, low)")
+        priority = listen()
+        get_tasks_by_priority(priority.lower())
 
-        elif "priority" in command:
-            speak("What priority level would you like to check? (high, medium, low)")
-            priority = listen()
-            get_tasks_by_priority(priority.lower())
+    elif "category" in command:
+        speak("Which category would you like to check? (work or personal)")
+        category = listen()
+        get_tasks_by_category(category.lower())
 
-        elif "category" in command:
-            speak("Which category would you like to check? (work or personal)")
-            category = listen()
-            get_tasks_by_category(category.lower())
+    elif "upcoming" in command:
+        speak("Specify the deadline for upcoming tasks.")
+        deadline_input = listen()
+        deadline_date = dateparser.parse(deadline_input)
+        get_upcoming_tasks(deadline_date)
 
-        elif "upcoming" in command:
-            speak("Specify the deadline for upcoming tasks.")
-            deadline_input = listen()
-            deadline_date = dateparser.parse(deadline_input)
-            get_upcoming_tasks(deadline_date)
-
-        elif "exit" in command:
-            speak("Exiting Task Management module.")
-            break
-        else:
-            speak("Sorry, I didn't understand that command.")
-
-
-# Example Usage
-if __name__ == "__main__":
-    task_voice_interaction()
+    else:
+        speak("Sorry, I didn't understand that command.")

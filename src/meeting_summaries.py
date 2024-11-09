@@ -55,6 +55,8 @@ def process_meeting_summary(file_path, meeting_title):
     summary = summarize_text(transcript)
     print("Summary complete. Storing in Firestore...")
     store_summary(meeting_title, transcript, summary)
+    with open(f"{meeting_title}_summary.txt", "w") as file:
+        file.write(summary)
     print(f"Meeting summary for '{meeting_title}' processed and stored.")
 
 def speak(text):
@@ -79,13 +81,13 @@ def meeting_summary_voice_interaction():
     Handles the meeting summary command.
     Asks user for the audio file and processes the meeting summary.
     """
-    speak("Please tell me the path to the audio file of the meeting.")
+    speak("What's the name of the audio file?")
     audio_file = listen()
     if audio_file:
         speak(f"Processing the meeting summary from the file located at {audio_file}.")
         title = "Meeting Summary"
-        summary = process_meeting_summary(audio_file, title)
-        speak(f"Here is the summary of the meeting: {summary}")
+        process_meeting_summary(audio_file, title)
+        speak("The meeting summary has been processed and stored.")
     else:
         speak("Sorry, I couldn't process the audio file. Please try again.")
 

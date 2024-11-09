@@ -7,7 +7,7 @@ import os
 from config import SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, YOUTUBE_API_KEY
 import speech_recognition as sr
 import pyttsx3
-
+from word2number import w2n
 
 # Initialize recognizer and text-to-speech
 recognizer = sr.Recognizer()
@@ -105,10 +105,17 @@ def handle_command(command, input_text=None):
 
     elif command == "seek":
         try:
-            minutes = input_text[0]  # Extract time in seconds from input
-            seconds = input_text[1] if len(input_text) > 1 else 0
-            seconds = int(minutes) * 60 + int(seconds)
+            if input_text.isdigit():
+                minutes = input_text[0]  # Extract time in seconds from input
+                seconds = input_text[1] if len(input_text) > 1 else 0
+                seconds = int(minutes) * 60 + int(seconds)
+            else:
+                minutes = w2n.word_to_num(input_text[0])
+                seconds = w2n.word_to_num(input_text[1])
+                seconds = minutes * 60 + seconds
+
             sp.seek_track(seconds * 1000)  # Spotify API uses milliseconds
+
         except Exception as e:
             print("Invalid seek time:", e)
 
@@ -134,23 +141,21 @@ def listen():
 
 def entertainment_control_voice_interaction():
         # Listen for media-related commands
-        print("What do you want to play today?")
+        speak("What do you want to play today?")
         media_name = listen()
-        print("Where do you want to play it (Spotify, YouTube, local)?")
+        speak("Where do you want to play it (Spotify, YouTube, local)?")
         platform = listen()
 
         handle_command("play", media_name+" on "+platform)
 
+        input_text = ""
         while True:
             command = listen()
             if command is None:
                 continue
             if command == "seek":
-                print("Enter the time to seek to (in seconds):")
+                speak("Tell the position to seek to :")
                 input_text = listen().split()
             if command == "exit":
                 break
             handle_command(command, input_text)
-
-if __name__ == "__main__":
-    entertainment_control_voice_interaction()

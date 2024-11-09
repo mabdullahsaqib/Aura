@@ -61,10 +61,10 @@ def translation_voice_interaction():
     Main function to interact with the Real-Time Translation system.
     It listens for input in one language and translates it to another language.
     """
-    print("Real-Time Translation - Say 'exit' to quit.")
+    speak("Real-Time Translation - Say 'exit' to quit.")
 
     while True:
-        print("\nPlease say something to translate...")
+        speak("\nPlease say something to translate...")
         text_to_translate = listen()
 
         if text_to_translate.lower() == "exit":
@@ -77,9 +77,5 @@ def translation_voice_interaction():
         target_language = "en"
 
         translated_text = translate_text(text_to_translate, target_language)
-        print(f"Translated Text: {translated_text}")
-
-
-# Example Usage
-if __name__ == "__main__":
-    translation_voice_interaction()
+        print("Translated Text : " + translated_text)
+        speak(translated_text)

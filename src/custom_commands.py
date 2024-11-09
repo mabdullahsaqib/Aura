@@ -86,6 +86,3 @@ def check_and_execute_command(command_name):
                     speak("Command creation canceled.")
         else:
             speak("Command creation canceled.")
-
-if __name__ == "__main__":
-    check_and_execute_command("open terminal")

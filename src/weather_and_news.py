@@ -111,7 +111,7 @@ def weather_and_news_voice_interaction(command):
         if news_headlines:
             speak(f"Here are the top 5 headlines:")
             for i, article in enumerate(news_headlines, 1):
-                speak(f"Headline {i}: {article['title']}.")
-                speak(f"Description: {article['description']}")
+                print(f"Headline {i}: {article['title']}.")
+                print(f"Description: {article['description']}")
         else:
             speak("Sorry, I couldn't fetch the news.")
