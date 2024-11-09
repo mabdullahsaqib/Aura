@@ -164,3 +164,4 @@ cython_debug/
 /credentials_c.json
 /gmail_credentials.json
 /token.json
+.idea/workspace.xml
