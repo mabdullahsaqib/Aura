@@ -1,15 +1,12 @@
-import firebase_admin
-from firebase_admin import credentials, firestore
-import google.generativeai as genai
 from datetime import datetime
 import dateparser
-import speech_recognition as sr
+import google.generativeai as genai
 import pyttsx3
-from config import FIREBASE_CREDENTIALS_PATH, GEMINI_API_KEY
+import speech_recognition as sr
+from firebase_admin import firestore
+from config import GEMINI_API_KEY
 
 # Initialize Firestore
-cred = credentials.Certificate(FIREBASE_CREDENTIALS_PATH)
-firebase_admin.initialize_app(cred)
 db = firestore.client()
 
 # Initialize Gemini model

@@ -1,13 +1,13 @@
-import spotipy
-from spotipy.oauth2 import SpotifyOAuth
-from googleapiclient.discovery import build
+import os
 import subprocess
 import webbrowser
-import os
-from config import SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, YOUTUBE_API_KEY
-import speech_recognition as sr
 import pyttsx3
+import speech_recognition as sr
+import spotipy
+from googleapiclient.discovery import build
+from spotipy.oauth2 import SpotifyOAuth
 from word2number import w2n
+from config import SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, YOUTUBE_API_KEY
 
 # Initialize recognizer and text-to-speech
 recognizer = sr.Recognizer()
@@ -26,7 +26,7 @@ youtube = build("youtube", "v3", developerKey=YOUTUBE_API_KEY)
 # Function for local media playback
 def play_local_media(file_path):
     if os.path.isfile(file_path):
-        subprocess.Popen( file_path, shell=True)
+        subprocess.Popen(file_path, shell=True)
     else:
         print("File does not exist:", file_path)
 
@@ -122,9 +122,11 @@ def handle_command(command, input_text=None):
     else:
         print(f"Unknown command: {command}")
 
+
 def speak(text):
     engine.say(text)
     engine.runAndWait()
+
 
 def listen():
     with sr.Microphone() as source:
@@ -139,23 +141,24 @@ def listen():
         speak("Voice service unavailable.")
         return ""
 
+
 def entertainment_control_voice_interaction():
-        # Listen for media-related commands
-        speak("What do you want to play today?")
-        media_name = listen()
-        speak("Where do you want to play it (Spotify, YouTube, local)?")
-        platform = listen()
+    # Listen for media-related commands
+    speak("What do you want to play today?")
+    media_name = listen()
+    speak("Where do you want to play it (Spotify, YouTube, local)?")
+    platform = listen()
 
-        handle_command("play", media_name+" on "+platform)
+    handle_command("play", media_name + " on " + platform)
 
-        input_text = ""
-        while True:
-            command = listen()
-            if command is None:
-                continue
-            if command == "seek":
-                speak("Tell the position to seek to :")
-                input_text = listen().split()
-            if command == "exit":
-                break
-            handle_command(command, input_text)
+    input_text = ""
+    while True:
+        command = listen()
+        if command is None:
+            continue
+        if command == "seek":
+            speak("Tell the position to seek to :")
+            input_text = listen().split()
+        if command == "exit":
+            break
+        handle_command(command, input_text)

@@ -1,11 +1,10 @@
-import whisper
 import google.generativeai as genai
-import firebase_admin
-from firebase_admin import credentials, firestore
-from config import FIREBASE_CREDENTIALS_PATH, GEMINI_API_KEY
-import speech_recognition as sr
 import pyttsx3
+import speech_recognition as sr
+import whisper
+from firebase_admin import firestore
 
+from config import GEMINI_API_KEY
 
 # Initialize recognizer and text-to-speech
 recognizer = sr.Recognizer()
@@ -13,8 +12,6 @@ engine = pyttsx3.init()
 engine.setProperty('rate', 150)  # Adjust speaking rate if needed
 
 # Initialize Firestore
-cred = credentials.Certificate(FIREBASE_CREDENTIALS_PATH)
-firebase_admin.initialize_app(cred)
 db = firestore.client()
 
 # Initialize GEMINI
@@ -24,6 +21,7 @@ model = genai.GenerativeModel("gemini-1.5-flash")
 # Initialize Whisper Model
 whisper_model = whisper.load_model("base")
 
+
 # Transcribe Audio Function
 def transcribe_audio(file_path):
     result = whisper_model.transcribe(file_path)
@@ -31,11 +29,13 @@ def transcribe_audio(file_path):
     print("Transcript : ", transcript)
     return transcript
 
+
 # Summarize Transcript with GEMINI
 def summarize_text(text):
     response = model.generate_content("Summarize the following meeting transcript, briefly :" + text)
     print("Summary : ", response.text)
     return response.text
+
 
 # Store Meeting Summary in Firestore
 def store_summary(meeting_title, transcript, summary):
@@ -46,6 +46,7 @@ def store_summary(meeting_title, transcript, summary):
         "summary": summary
     })
     print(f"Meeting '{meeting_title}' summary saved successfully.")
+
 
 # Main Function to Transcribe, Summarize, and Store
 def process_meeting_summary(file_path, meeting_title):
@@ -59,9 +60,11 @@ def process_meeting_summary(file_path, meeting_title):
         file.write(summary)
     print(f"Meeting summary for '{meeting_title}' processed and stored.")
 
+
 def speak(text):
     engine.say(text)
     engine.runAndWait()
+
 
 def listen():
     with sr.Microphone() as source:
@@ -75,6 +78,7 @@ def listen():
     except sr.RequestError:
         speak("Voice service unavailable.")
         return ""
+
 
 def meeting_summary_voice_interaction():
     """
@@ -90,6 +94,7 @@ def meeting_summary_voice_interaction():
         speak("The meeting summary has been processed and stored.")
     else:
         speak("Sorry, I couldn't process the audio file. Please try again.")
+
 
 # Example Usage
 if __name__ == "__main__":

@@ -3,7 +3,6 @@ from config import WEATHER_API_KEY, WEATHER_API_HOST, NEWS_API_KEY
 import speech_recognition as sr
 import pyttsx3
 
-
 # Initialize recognizer and text-to-speech
 recognizer = sr.Recognizer()
 engine = pyttsx3.init()
@@ -14,7 +13,6 @@ WEATHER_API_URL = "https://weatherapi-com.p.rapidapi.com/current.json"
 
 # News API setup
 NEWS_API_URL = "https://newsapi.org/v2/top-headlines"
-
 
 
 # Weather fetching function
@@ -75,9 +73,11 @@ def get_news(country="us", category="general", num_articles=5):
         print(f"Error fetching news data: {e}")
         return None
 
+
 def speak(text):
     engine.say(text)
     engine.runAndWait()
+
 
 def listen():
     with sr.Microphone() as source:

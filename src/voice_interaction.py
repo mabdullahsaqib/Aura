@@ -1,6 +1,14 @@
-import speech_recognition as sr
-import pyttsx3
 import random
+
+import firebase_admin
+import pyttsx3
+import speech_recognition as sr
+from firebase_admin import credentials
+from config import FIREBASE_CREDENTIALS_PATH
+
+# Firebase initialization
+cred = credentials.Certificate(FIREBASE_CREDENTIALS_PATH)
+firebase_admin.initialize_app(cred)
 
 # Import all the modules as needed
 from task_management import task_voice_interaction
@@ -15,15 +23,16 @@ from personalized_recommendations import recommendations_voice_interaction
 from entertainment_controls import entertainment_control_voice_interaction
 from meeting_summaries import meeting_summary_voice_interaction
 
-
 # Initialize recognizer and text-to-speech
 recognizer = sr.Recognizer()
 engine = pyttsx3.init()
 engine.setProperty('rate', 150)  # Adjust speaking rate if needed
 
+
 def speak(text):
     engine.say(text)
     engine.runAndWait()
+
 
 def listen():
     with sr.Microphone() as source:
@@ -38,6 +47,7 @@ def listen():
         speak("Voice service unavailable.")
         return ""
 
+
 def activate_module(command):
     """
     Activate the appropriate module based on the user's command.
@@ -50,11 +60,11 @@ def activate_module(command):
         note_voice_interaction(command)
     elif "document" in command or "file" in command or "folder" in command or "directory" in command or "drive" in command:
         document_management_voice_interaction(command)
-    elif "translation" in command or "translate" in command :
+    elif "translation" in command or "translate" in command:
         translation_voice_interaction()
-    elif "email" in command or "mail" in command or "inbox" in command :
+    elif "email" in command or "mail" in command or "inbox" in command:
         email_voice_interaction(command)
-    elif "weather" in command or "news" in command or "headline" in command or "article" in command :
+    elif "weather" in command or "news" in command or "headline" in command or "article" in command:
         weather_and_news_voice_interaction(command)
     elif "recommendation" in command or "suggestion" in command or "advice" in command or "recommendations" in command or "recommend" in command:
         recommendations_voice_interaction(command)
@@ -64,6 +74,7 @@ def activate_module(command):
         meeting_summary_voice_interaction(command)
     else:
         check_and_execute_command(command)
+
 
 def main():
     """
@@ -79,3 +90,6 @@ def main():
             break
         activate_module(command.lower())
 
+
+if __name__ == "__main__":
+    main()

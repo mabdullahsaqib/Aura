@@ -1,26 +1,22 @@
-import firebase_admin
-from firebase_admin import credentials, firestore
-import google.generativeai as genai
 from datetime import datetime
-from config import FIREBASE_CREDENTIALS_PATH , GEMINI_API_KEY
-import speech_recognition as sr
+import google.generativeai as genai
 import pyttsx3
-
+import speech_recognition as sr
+from firebase_admin import firestore
+from config import GEMINI_API_KEY
 
 # Initialize recognizer and text-to-speech
 recognizer = sr.Recognizer()
 engine = pyttsx3.init()
 engine.setProperty('rate', 150)  # Adjust speaking rate if needed
 
-
 # Initialize Firestore
-cred = credentials.Certificate(FIREBASE_CREDENTIALS_PATH)
-firebase_admin.initialize_app(cred)
 db = firestore.client()
 
 # Initialize Gemini model
 genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel("gemini-1.5-flash")
+
 
 def get_next_note_id():
     """
@@ -32,6 +28,7 @@ def get_next_note_id():
     next_id = current_id + 1
     counter_ref.set({"count": next_id})  # Update the counter in Firestore
     return next_id  # Use plain numeric ID
+
 
 def add_note(title, content, tags=None):
     """
@@ -55,7 +52,7 @@ def add_note(title, content, tags=None):
     print("Note added successfully!")
 
 
-def retrieve_notes(note_id= None, keyword=None, tag=None, date_range=None):
+def retrieve_notes(note_id=None, keyword=None, tag=None, date_range=None):
     """
     Retrieves notes based on a keyword, tag, or date range.
 
@@ -72,7 +69,6 @@ def retrieve_notes(note_id= None, keyword=None, tag=None, date_range=None):
     if note_id:
         query = query.where("note_id", "==", note_id)
         return [note.to_dict() for note in query.stream()]
-
 
     if tag:
         query = query.where("tags", "array_contains", tag)
@@ -152,9 +148,11 @@ def edit_note(note_id, new_title=None, new_content=None, new_tags=None):
     note_ref.update(update_data)
     print("Note updated successfully!")
 
+
 def speak(text):
     engine.say(text)
     engine.runAndWait()
+
 
 def listen():
     with sr.Microphone() as source:
@@ -169,77 +167,76 @@ def listen():
         speak("Voice service unavailable.")
         return ""
 
+
 def note_voice_interaction(choice):
-
-        if "add" in choice:
-            speak("Please say the note title.")
-            title = listen()
-            speak("Please say the note content.")
-            content = listen()
-            speak("Would you like to add tags? Say yes or no.")
-            if "yes" in listen().lower():
-                speak("Please say the tags, separated by commas.")
-                tags = listen().split(",")
-            else:
-                tags = None
-            add_note(title, content, tags)
-            speak("Note added successfully.")
-
-        elif "retrieve" in choice and "all" not in choice:
-            speak("Please say the note ID to retrieve or leave blank.")
-            note_id = listen() or None
-            speak("Please say a keyword or leave blank.")
-            keyword = listen() or None
-            speak("Please say a tag to filter by, or leave blank.")
-            tag = listen() or None
-            notes = retrieve_notes(note_id=note_id ,keyword=keyword, tag=tag)
-            speak("Notes retrieved. Check the console for details.")
-            for note in notes:
-                print(f"Note ID: {note['note_id']}, Title: {note['title']}, Content: {note['content']}")
-
-        elif "retrieve all" in choice:
-            notes = retrieve_all_notes()
-            speak("All notes retrieved. Check the console for details.")
-            for note in notes:
-                print(f"Note ID: {note['note_id']}, Title: {note['title']}")
-
-        elif "summarize" in choice:
-            speak("Please say the note ID to summarize.")
-            note_id = listen()
-            note = db.collection("notes").document(note_id).get()
-            if note.exists:
-                summary = summarize_note(note.to_dict()["content"])
-                speak("Note summarized. Check the console for details.")
-                print(f"Summary: {summary}")
-            else:
-                speak("Note not found.")
-
-        elif "delete" in choice:
-            speak("Please say the note ID to delete.")
-            note_id = listen()
-            delete_note(note_id)
-            speak("Note deleted successfully.")
-
-        elif "edit" in choice:
-            speak("Please say the note ID to edit.")
-            note_id = listen()
-            speak("Please say the new title or say 'skip' to leave unchanged.")
-            new_title = listen()
-            if "skip" in new_title.lower():
-                new_title = None
-            speak("Please say the new content or say 'skip' to leave unchanged.")
-            new_content = listen()
-            if "skip" in new_content.lower():
-                new_content = None
-            speak("Would you like to update tags? Say yes or no.")
-            if "yes" in listen().lower():
-                speak("Please say the new tags, separated by commas.")
-                new_tags = listen().split(",")
-            else:
-                new_tags = None
-            edit_note(note_id, new_title, new_content, new_tags)
-            speak("Note edited successfully.")
-
+    if "add" in choice:
+        speak("Please say the note title.")
+        title = listen()
+        speak("Please say the note content.")
+        content = listen()
+        speak("Would you like to add tags? Say yes or no.")
+        if "yes" in listen().lower():
+            speak("Please say the tags, separated by commas.")
+            tags = listen().split(",")
         else:
-            speak("Option not recognized, please try again.")
+            tags = None
+        add_note(title, content, tags)
+        speak("Note added successfully.")
 
+    elif "retrieve" in choice and "all" not in choice:
+        speak("Please say the note ID to retrieve or leave blank.")
+        note_id = listen() or None
+        speak("Please say a keyword or leave blank.")
+        keyword = listen() or None
+        speak("Please say a tag to filter by, or leave blank.")
+        tag = listen() or None
+        notes = retrieve_notes(note_id=note_id, keyword=keyword, tag=tag)
+        speak("Notes retrieved. Check the console for details.")
+        for note in notes:
+            print(f"Note ID: {note['note_id']}, Title: {note['title']}, Content: {note['content']}")
+
+    elif "retrieve all" in choice:
+        notes = retrieve_all_notes()
+        speak("All notes retrieved. Check the console for details.")
+        for note in notes:
+            print(f"Note ID: {note['note_id']}, Title: {note['title']}")
+
+    elif "summarize" in choice:
+        speak("Please say the note ID to summarize.")
+        note_id = listen()
+        note = db.collection("notes").document(note_id).get()
+        if note.exists:
+            summary = summarize_note(note.to_dict()["content"])
+            speak("Note summarized. Check the console for details.")
+            print(f"Summary: {summary}")
+        else:
+            speak("Note not found.")
+
+    elif "delete" in choice:
+        speak("Please say the note ID to delete.")
+        note_id = listen()
+        delete_note(note_id)
+        speak("Note deleted successfully.")
+
+    elif "edit" in choice:
+        speak("Please say the note ID to edit.")
+        note_id = listen()
+        speak("Please say the new title or say 'skip' to leave unchanged.")
+        new_title = listen()
+        if "skip" in new_title.lower():
+            new_title = None
+        speak("Please say the new content or say 'skip' to leave unchanged.")
+        new_content = listen()
+        if "skip" in new_content.lower():
+            new_content = None
+        speak("Would you like to update tags? Say yes or no.")
+        if "yes" in listen().lower():
+            speak("Please say the new tags, separated by commas.")
+            new_tags = listen().split(",")
+        else:
+            new_tags = None
+        edit_note(note_id, new_title, new_content, new_tags)
+        speak("Note edited successfully.")
+
+    else:
+        speak("Option not recognized, please try again.")

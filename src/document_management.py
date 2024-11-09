@@ -2,11 +2,10 @@ import os
 import shutil
 from pathlib import Path
 import google.generativeai as genai
-from config import GEMINI_API_KEY, FIREBASE_CREDENTIALS_PATH
-import speech_recognition as sr
 import pyttsx3
-import firebase_admin
-from firebase_admin import credentials, firestore
+import speech_recognition as sr
+from firebase_admin import firestore
+from config import GEMINI_API_KEY
 
 # Initialize recognizer and text-to-speech
 recognizer = sr.Recognizer()
@@ -14,8 +13,6 @@ engine = pyttsx3.init()
 engine.setProperty('rate', 150)  # Adjust speaking rate if needed
 
 # Initialize Firestore
-cred = credentials.Certificate(FIREBASE_CREDENTIALS_PATH)
-firebase_admin.initialize_app(cred)
 db = firestore.client()
 
 # Initialize Gemini
@@ -146,7 +143,7 @@ def summarize_document(file_name, base_folder_name, target_folder_name):
         if file_path.exists():
             with open(file_name, "r", encoding="utf-8") as file:
                 content = file.read()
-            response = model.generate_content("Summarize the following file content: " + content )
+            response = model.generate_content("Summarize the following file content: " + content)
             return response.text
 
         else:
@@ -182,7 +179,8 @@ def classify_document(file_name, base_folder_name, target_folder_name):
             with open(file_name, "r", encoding="utf-8") as file:
                 content = file.read()
 
-            response = model.generate_content("Classify this file content to a category, say only work or personal: " + content)
+            response = model.generate_content(
+                "Classify this file content to a category, say only work or personal: " + content)
             print(f"Document '{file_name}' classified as: {response.text.strip()}")
             return response.text.strip()
 
@@ -220,10 +218,10 @@ def retrieve_document(document_name, base_folder_name, target_folder_name):
         document_path = target_path / document_name
         if document_path.exists():
             try:
-                 with open(document_path, "r") as file:
+                with open(document_path, "r") as file:
                     content = file.read()
-                 print(f"\nContent of '{document_name}':\n{content}")
-                 return content
+                print(f"\nContent of '{document_name}':\n{content}")
+                return content
 
             except FileNotFoundError:
                 print(f"Document '{document_name}' not found at {target_path}.")
@@ -253,7 +251,8 @@ def find_folder(base_directory, target_folder_name):
     return None
 
 
-def move_document(file_name, current_base_folder_name, current_folder_name ,target_base_folder_name, target_folder_name):
+def move_document(file_name, current_base_folder_name, current_folder_name, target_base_folder_name,
+                  target_folder_name):
     """
     Moves a document to a target folder, searching within a base folder.
 
@@ -272,7 +271,7 @@ def move_document(file_name, current_base_folder_name, current_folder_name ,targ
     if current_base_folder_name == current_folder_name:
         file_path = current_base_directory / file_name
     else:
-        #search for the file in the current folder
+        # search for the file in the current folder
         current_path = find_folder(current_base_directory, current_folder_name)
         if current_path:
             file_path = current_path / file_name
@@ -291,7 +290,6 @@ def move_document(file_name, current_base_folder_name, current_folder_name ,targ
     else:
         # Search for the target folder within the base directory
         target_path = find_folder(target_base_directory, target_folder_name)
-
 
     if target_path:
         try:
@@ -359,92 +357,91 @@ def listen():
 
 
 def document_management_voice_interaction(command):
+    if "create" in command:
+        speak("What is the name of the file?")
+        file_name = listen().lower()
+        speak("What content would you like to add to the file?")
+        content = listen().lower()
+        speak("Which base folder is the target folder in?")
+        base_folder = listen().lower()
+        speak("What target folder should I use?")
+        target_folder = listen().lower()
+        create_document(file_name, content, base_folder, target_folder)
+        speak(f"Document {file_name} created successfully.")
 
-        if "create" in command:
-            speak("What is the name of the file?")
-            file_name = listen().lower()
-            speak("What content would you like to add to the file?")
-            content = listen().lower()
-            speak("Which base folder is the target folder in?")
-            base_folder = listen().lower()
-            speak("What target folder should I use?")
-            target_folder = listen().lower()
-            create_document(file_name, content, base_folder, target_folder)
-            speak(f"Document {file_name} created successfully.")
+    elif "edit" in command:
+        speak("What is the name of the file to edit?")
+        file_name = listen().lower()
+        speak("What new content would you like to append?")
+        new_content = listen().lower()
+        speak("Which base folder is the target folder or document in?")
+        base_folder = listen().lower()
+        speak("What target folder is this document in?")
+        target_folder = listen().lower()
+        edit_document(file_name, new_content, base_folder, target_folder)
+        speak(f"Document {file_name} edited successfully.")
 
-        elif "edit" in command:
-            speak("What is the name of the file to edit?")
-            file_name = listen().lower()
-            speak("What new content would you like to append?")
-            new_content = listen().lower()
-            speak("Which base folder is the target folder or document in?")
-            base_folder = listen().lower()
-            speak("What target folder is this document in?")
-            target_folder = listen().lower()
-            edit_document(file_name, new_content, base_folder, target_folder)
-            speak(f"Document {file_name} edited successfully.")
+    elif "delete" in command:
+        speak("What is the name of the file to delete?")
+        file_name = listen().lower()
+        speak("Which base folder is the target folder or this document in?")
+        base_folder = listen().lower()
+        speak("What target folder is this document in?")
+        target_folder = listen().lower()
+        delete_document(file_name, base_folder, target_folder)
+        speak(f"Document {file_name} deleted successfully.")
 
-        elif "delete" in command:
-            speak("What is the name of the file to delete?")
-            file_name = listen().lower()
-            speak("Which base folder is the target folder or this document in?")
-            base_folder = listen().lower()
-            speak("What target folder is this document in?")
-            target_folder = listen().lower()
-            delete_document(file_name, base_folder, target_folder)
-            speak(f"Document {file_name} deleted successfully.")
+    elif "summarize" in command:
+        speak("What is the name of the file to summarize?")
+        file_name = listen().lower()
+        speak("Which base folder is this document in?")
+        base_folder = listen().lower()
+        speak("What target folder is this document in?")
+        target_folder = listen().lower()
+        summary = summarize_document(file_name, base_folder, target_folder)
+        speak(f"The summary of {file_name} is: {summary}")
 
-        elif "summarize" in command:
-            speak("What is the name of the file to summarize?")
-            file_name = listen().lower()
-            speak("Which base folder is this document in?")
-            base_folder = listen().lower()
-            speak("What target folder is this document in?")
-            target_folder = listen().lower()
-            summary = summarize_document(file_name, base_folder, target_folder)
-            speak(f"The summary of {file_name} is: {summary}")
+    elif "classify" in command:
+        speak("What is the name of the file to classify?")
+        file_name = listen().lower()
+        speak("Which base folder is this document in?")
+        base_folder = listen().lower()
+        speak("What target folder is this document in?")
+        target_folder = listen().lower()
+        classify_document(file_name, base_folder, target_folder)
+        speak(f"Document {file_name} classified successfully.")
 
-        elif "classify" in command:
-            speak("What is the name of the file to classify?")
-            file_name = listen().lower()
-            speak("Which base folder is this document in?")
-            base_folder = listen().lower()
-            speak("What target folder is this document in?")
-            target_folder = listen().lower()
-            classify_document(file_name, base_folder, target_folder)
-            speak(f"Document {file_name} classified successfully.")
+    elif "move" in command:
+        speak("What is the name of the file to move?")
+        file_name = listen().lower()
+        speak("Which current base folder is this file in?")
+        current_base_folder = listen().lower()
+        speak("Which current folder is this file in?")
+        current_folder = listen().lower()
+        speak("Which target base folder should this file move to?")
+        target_base_folder = listen().lower()
+        speak("Which target folder should this file move to?")
+        target_folder = listen().lower()
+        move_document(file_name, current_base_folder, current_folder, target_base_folder, target_folder)
+        speak(f"Document {file_name} moved successfully.")
 
-        elif "move" in command:
-            speak("What is the name of the file to move?")
-            file_name = listen().lower()
-            speak("Which current base folder is this file in?")
-            current_base_folder = listen().lower()
-            speak("Which current folder is this file in?")
-            current_folder = listen().lower()
-            speak("Which target base folder should this file move to?")
-            target_base_folder = listen().lower()
-            speak("Which target folder should this file move to?")
-            target_folder = listen().lower()
-            move_document(file_name, current_base_folder, current_folder, target_base_folder, target_folder)
-            speak(f"Document {file_name} moved successfully.")
+    elif "retrieve" in command:
+        speak("What is the name of the document to retrieve?")
+        document_name = listen().lower()
+        speak("Which base folder is the target folder or document in?")
+        base_folder = listen().lower()
+        speak("What target folder is this document in?")
+        target_folder = listen().lower()
+        retrieve_document(document_name, base_folder, target_folder)
+        speak(f"Document {document_name} retrieved successfully.")
 
-        elif "retrieve" in command:
-            speak("What is the name of the document to retrieve?")
-            document_name = listen().lower()
-            speak("Which base folder is the target folder or document in?")
-            base_folder = listen().lower()
-            speak("What target folder is this document in?")
-            target_folder = listen().lower()
-            retrieve_document(document_name, base_folder, target_folder)
-            speak(f"Document {document_name} retrieved successfully.")
+    elif "list" in command:
+        speak("Which base folder would you like to list documents from?")
+        base_folder = listen().lower()
+        speak("Which target folder would you like to list documents from?")
+        target_folder = listen().lower()
+        list_documents(base_folder, target_folder)
+        speak("Listing documents complete.")
 
-        elif "list" in command:
-            speak("Which base folder would you like to list documents from?")
-            base_folder = listen().lower()
-            speak("Which target folder would you like to list documents from?")
-            target_folder = listen().lower()
-            list_documents(base_folder, target_folder)
-            speak("Listing documents complete.")
-
-        else:
-            speak("I didn't understand that command. Please try again.")
+    else:
+        speak("I didn't understand that command. Please try again.")

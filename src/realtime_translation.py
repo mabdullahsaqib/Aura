@@ -1,7 +1,6 @@
-from googletrans import Translator
-import speech_recognition as sr
 import pyttsx3
-
+import speech_recognition as sr
+from googletrans import Translator
 
 # Initialize recognizer and text-to-speech
 recognizer = sr.Recognizer()
@@ -38,9 +37,11 @@ def translate_text(text, target_language="en"):
         print(f"Error during translation: {e}")
         return None
 
+
 def speak(text):
     engine.say(text)
     engine.runAndWait()
+
 
 def listen():
     with sr.Microphone() as source:

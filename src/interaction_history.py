@@ -1,16 +1,14 @@
-import firebase_admin
-from firebase_admin import credentials, firestore
 from datetime import datetime
 import google.generativeai as genai
-from config import FIREBASE_CREDENTIALS_PATH, GEMINI_API_KEY
+from firebase_admin import firestore
+from config import GEMINI_API_KEY
 
 # Initialize Firestore
-cred = credentials.Certificate(FIREBASE_CREDENTIALS_PATH)
-firebase_admin.initialize_app(cred)
 db = firestore.client()
 
 # Configure GEMINI API
 genai.configure(api_key=GEMINI_API_KEY)
+
 
 # Function to get and increment session ID
 def get_next_session_id():
@@ -24,13 +22,15 @@ def get_next_session_id():
     counter_ref.set({"count": next_id})  # Update the counter in Firestore
     return next_id  # Use plain numeric ID
 
+
 # Retrieve Latest Session's History by ID
 def get_last_session_history():
     """
     Retrieve the chat history from the latest session in Firestore.
     """
     # Fetch the latest session document by ordering by ID in descending order
-    sessions = db.collection("interaction_history").order_by("__name__", direction=firestore.Query.DESCENDING).limit(1).stream()
+    sessions = db.collection("interaction_history").order_by("__name__", direction=firestore.Query.DESCENDING).limit(
+        1).stream()
     history = []
 
     # Get messages from the latest session
@@ -44,11 +44,13 @@ def get_last_session_history():
     print("Retrieved history:", history)
     return history
 
+
 # GEMINI Interaction with History
 def initialize_chat_with_gemini(history):
     model = genai.GenerativeModel("gemini-1.5-flash")
     chat = model.start_chat(history=history)
     return chat
+
 
 # Save or Append to Continuous Chat in Firestore
 def save_to_chat(session_id: int, command: str, response: str):
@@ -56,12 +58,14 @@ def save_to_chat(session_id: int, command: str, response: str):
     new_message = {"timestamp": datetime.now(), "command": command, "response": response}
     chat_ref.set({"messages": firestore.ArrayUnion([new_message])}, merge=True)
 
+
 # Main Interaction Function
 def handle_user_command(session_id: int, command: str, chat):
     response = chat.send_message(command)
     save_to_chat(session_id, command, response.text)
     print(f"Aura: {response.text}")
     return response.text
+
 
 # Example Usage
 if __name__ == "__main__":

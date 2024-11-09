@@ -1,13 +1,10 @@
 from datetime import datetime, timedelta
+from firebase_admin import firestore
 from plyer import notification
-import firebase_admin
-from firebase_admin import credentials, firestore
-from config import FIREBASE_CREDENTIALS_PATH
 
 # Firebase initialization
-cred = credentials.Certificate(FIREBASE_CREDENTIALS_PATH)
-firebase_admin.initialize_app(cred)
 db = firestore.client()
+
 
 def send_desktop_notification(title, message):
     """
@@ -34,6 +31,7 @@ def check_and_notify_tasks():
         title = f"Upcoming Task: {task_data['title']}"
         message = f"Deadline: {task_data['deadline']}"
         send_desktop_notification(title, message)
+
 
 # Example Usage
 if __name__ == "__main__":

@@ -1,11 +1,9 @@
-import firebase_admin
-from firebase_admin import credentials, firestore
-import google.generativeai as genai
 import subprocess
-from config import FIREBASE_CREDENTIALS_PATH, GEMINI_API_KEY
-import speech_recognition as sr
+import google.generativeai as genai
 import pyttsx3
-
+import speech_recognition as sr
+from firebase_admin import firestore
+from config import GEMINI_API_KEY
 
 # Initialize recognizer and text-to-speech
 recognizer = sr.Recognizer()
@@ -13,17 +11,17 @@ engine = pyttsx3.init()
 engine.setProperty('rate', 150)  # Adjust speaking rate if needed
 
 # Firebase initialization
-cred = credentials.Certificate(FIREBASE_CREDENTIALS_PATH)
-firebase_admin.initialize_app(cred)
 db = firestore.client()
 
 # Configure Gemini
 genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel("gemini-1.5-flash")
 
+
 def speak(text):
     engine.say(text)
     engine.runAndWait()
+
 
 def listen():
     with sr.Microphone() as source:
@@ -37,6 +35,7 @@ def listen():
     except sr.RequestError:
         speak("Voice service unavailable.")
         return ""
+
 
 def check_and_execute_command(command_name):
     """
@@ -65,7 +64,8 @@ def check_and_execute_command(command_name):
             if command_description:
                 try:
                     # Step 4: Pass command description to Gemini
-                    gemini_response = model.generate_content("Suggest a command that can be executed in shell and perform this action : " + command_description + "\nOnly write the command and nothing else. not even quotation marks or endline characters.")
+                    gemini_response = model.generate_content(
+                        "Suggest a command that can be executed in shell and perform this action : " + command_description + "\nOnly write the command and nothing else. not even quotation marks or endline characters.")
                     suggested_command = gemini_response.text.strip()
                 except Exception as e:
                     speak(f"Error generating command suggestion: {e}")

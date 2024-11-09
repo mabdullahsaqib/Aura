@@ -1,16 +1,16 @@
-import os.path
 import base64
+import os.path
+from email.mime.text import MIMEText
+import google.generativeai as genai  # Ensure Gemini API client is imported
+import pyttsx3
+import speech_recognition as sr
+from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-from email.mime.text import MIMEText
-import google.generativeai as genai  # Ensure Gemini API client is imported
-from google.auth.transport.requests import Request
-from config import GEMINI_API_KEY, GMAIL_CREDENTIALS_PATH, GMAIL_TOKEN_PATH
-import speech_recognition as sr
-import pyttsx3
 
+from config import GEMINI_API_KEY, GMAIL_CREDENTIALS_PATH, GMAIL_TOKEN_PATH
 
 # Initialize recognizer and text-to-speech
 recognizer = sr.Recognizer()
@@ -24,6 +24,7 @@ SCOPES = ['https://www.googleapis.com/auth/gmail.readonly',
 # Initialize Gemini API
 genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel("gemini-1.5-flash")
+
 
 def authenticate_gmail():
     creds = None
@@ -39,9 +40,10 @@ def authenticate_gmail():
             token.write(creds.to_json())
     return creds
 
-def fetch_emails(service, max_results = 5):
+
+def fetch_emails(service, max_results=5):
     try:
-        results = service.users().messages().list(userId='me', maxResults = max_results).execute()
+        results = service.users().messages().list(userId='me', maxResults=max_results).execute()
         messages = results.get('messages', [])
 
         if not messages:
@@ -72,6 +74,7 @@ def fetch_emails(service, max_results = 5):
     except HttpError as error:
         print(f"An error occurred: {error}")
 
+
 def send_email(service, to_email, subject, message_text):
     try:
         message = MIMEText(message_text)
@@ -85,6 +88,7 @@ def send_email(service, to_email, subject, message_text):
     except HttpError as error:
         print(f"An error occurred: {error}")
 
+
 def summarize_email(service, email_id):
     try:
         message = service.users().messages().get(userId='me', id=email_id).execute()
@@ -96,6 +100,7 @@ def summarize_email(service, email_id):
 
     except HttpError as error:
         print(f"An error occurred: {error}")
+
 
 def send_email_with_generated_response(service, email_id):
     try:
@@ -116,9 +121,11 @@ def send_email_with_generated_response(service, email_id):
     except HttpError as error:
         print(f"An error occurred: {error}")
 
+
 def speak(text):
     engine.say(text)
     engine.runAndWait()
+
 
 def listen():
     with sr.Microphone() as source:
@@ -133,6 +140,7 @@ def listen():
         speak("Voice service unavailable.")
         return ""
 
+
 # Example usage
 def email_voice_interaction(command):
     creds = authenticate_gmail()
@@ -140,7 +148,8 @@ def email_voice_interaction(command):
 
     if "fetch" in command or "emails" in command or "mails" in command or "inbox" in command:
         fetch_emails(service, 10)
-    elif ("send" in command or "compose" in command or "write" in command) and ("email" in command or "mail" in command):
+    elif ("send" in command or "compose" in command or "write" in command) and (
+            "email" in command or "mail" in command):
         speak("Who is the recipient?")
         to_email = listen()
         speak("What is the subject?")

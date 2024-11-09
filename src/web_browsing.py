@@ -1,9 +1,9 @@
-import requests
 import webbrowser
-from config import GOOGLE_API_KEY, GOOGLE_CSE_ID, GEMINI_API_KEY
 import google.generativeai as genai
-import speech_recognition as sr
 import pyttsx3
+import requests
+import speech_recognition as sr
+from config import GOOGLE_API_KEY, GOOGLE_CSE_ID, GEMINI_API_KEY
 
 # Initialize recognizer and text-to-speech
 recognizer = sr.Recognizer()
