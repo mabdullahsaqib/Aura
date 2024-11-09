@@ -5,6 +5,14 @@ import subprocess
 import webbrowser
 import os
 from config import SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, YOUTUBE_API_KEY
+import speech_recognition as sr
+import pyttsx3
+
+
+# Initialize recognizer and text-to-speech
+recognizer = sr.Recognizer()
+engine = pyttsx3.init()
+engine.setProperty('rate', 150)  # Adjust speaking rate if needed
 
 # Initialize Spotify and YouTube APIs
 scope = "user-read-playback-state user-modify-playback-state user-read-currently-playing"
@@ -107,16 +115,42 @@ def handle_command(command, input_text=None):
     else:
         print(f"Unknown command: {command}")
 
+def speak(text):
+    engine.say(text)
+    engine.runAndWait()
 
-# Example usage
-if __name__ == "__main__":
-        input_text = input("What do you want to play today : ").strip()
-        platform = input("Where do you want to play it (Spotify, YouTube, local)? ").strip().lower()
-        handle_command("play", input_text+" on "+platform)
+def listen():
+    with sr.Microphone() as source:
+        print("Listening...")
+        audio = recognizer.listen(source)
+    try:
+        return recognizer.recognize_google(audio)
+    except sr.UnknownValueError:
+        speak("I didn't catch that.")
+        return ""
+    except sr.RequestError:
+        speak("Voice service unavailable.")
+        return ""
+
+def entertainment_control_voice_interaction():
+        # Listen for media-related commands
+        print("What do you want to play today?")
+        media_name = listen()
+        print("Where do you want to play it (Spotify, YouTube, local)?")
+        platform = listen()
+
+        handle_command("play", media_name+" on "+platform)
+
         while True:
-            command = input("Enter a command (pause, resume, skip, previous, seek, exit): ").strip().lower()
+            command = listen()
+            if command is None:
+                continue
             if command == "seek":
-                input_text = input("Enter the time to seek to: ").split()
+                print("Enter the time to seek to (in seconds):")
+                input_text = listen().split()
             if command == "exit":
                 break
             handle_command(command, input_text)
+
+if __name__ == "__main__":
+    entertainment_control_voice_interaction()

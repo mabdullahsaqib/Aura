@@ -3,6 +3,14 @@ import shutil
 from pathlib import Path
 import google.generativeai as genai
 from config import GEMINI_API_KEY
+import speech_recognition as sr
+import pyttsx3
+
+# Initialize recognizer and text-to-speech
+recognizer = sr.Recognizer()
+engine = pyttsx3.init()
+engine.setProperty('rate', 150)  # Adjust speaking rate if needed
+
 
 # Initialize Gemini
 genai.configure(api_key=GEMINI_API_KEY)
@@ -325,68 +333,123 @@ def list_documents(base_folder_name, target_folder_name):
         return []
 
 
-def main():
-    """
-    Main function to interact with the Document Management Module.
-    """
-    print("Welcome to Aura's Document Management Module!")
+def speak(text):
+    engine.say(text)
+    engine.runAndWait()
+
+
+def listen():
+    with sr.Microphone() as source:
+        print("Listening...")
+        audio = recognizer.listen(source)
+    try:
+        return recognizer.recognize_google(audio)
+    except sr.UnknownValueError:
+        speak("I didn't catch that.")
+        return ""
+    except sr.RequestError:
+        speak("Voice service unavailable.")
+        return ""
+
+
+def document_voice_interaction():
+    speak("Welcome to the Document Management module. How can I assist you?")
+
     while True:
-        choice = input("\nChoose an option: [create, edit, delete, summarize, classify, move, retrieve, list, exit]: ").lower()
+        command = listen().lower()
 
-        if choice == "create":
-            file_name = input("Enter the name of the file to create: ")
-            content = input("Enter the content of the file: ")
-            base_folder = input("Enter the base folder name: ")
-            target_folder = input("Enter the target folder name: ")
+        if "create" in command:
+            speak("What is the name of the file?")
+            file_name = listen().lower()
+            speak("What content would you like to add to the file?")
+            content = listen().lower()
+            speak("Which base folder should I place this in?")
+            base_folder = listen().lower()
+            speak("What target folder should I use?")
+            target_folder = listen().lower()
             create_document(file_name, content, base_folder, target_folder)
+            speak(f"Document {file_name} created successfully.")
 
-        elif choice == "edit":
-            file_name = input("Enter the name of the file to edit: ")
-            new_content = input("Enter the new content to append: ")
-            base_folder = input("Enter the base folder name: ")
-            target_folder = input("Enter the target folder name: ")
+        elif "edit" in command:
+            speak("What is the name of the file to edit?")
+            file_name = listen().lower()
+            speak("What new content would you like to append?")
+            new_content = listen().lower()
+            speak("Which base folder is this document in?")
+            base_folder = listen().lower()
+            speak("What target folder is this document in?")
+            target_folder = listen().lower()
             edit_document(file_name, new_content, base_folder, target_folder)
+            speak(f"Document {file_name} edited successfully.")
 
-        elif choice == "delete":
-            file_name = input("Enter the name of the file to delete: ")
-            base_folder = input("Enter the base folder name: ")
-            target_folder = input("Enter the target folder name: ")
+        elif "delete" in command:
+            speak("What is the name of the file to delete?")
+            file_name = listen().lower()
+            speak("Which base folder is this document in?")
+            base_folder = listen().lower()
+            speak("What target folder is this document in?")
+            target_folder = listen().lower()
             delete_document(file_name, base_folder, target_folder)
+            speak(f"Document {file_name} deleted successfully.")
 
-        elif choice == "summarize":
-            file_name = input("Enter the name of the file to summarize: ")
-            base_folder = input("Enter the base folder name: ")
-            target_folder = input("Enter the target folder name: ")
-            print(summarize_document(file_name, base_folder, target_folder))
+        elif "summarize" in command:
+            speak("What is the name of the file to summarize?")
+            file_name = listen().lower()
+            speak("Which base folder is this document in?")
+            base_folder = listen().lower()
+            speak("What target folder is this document in?")
+            target_folder = listen().lower()
+            summary = summarize_document(file_name, base_folder, target_folder)
+            speak(f"The summary of {file_name} is: {summary}")
 
-        elif choice == "classify":
-            file_name = input("Enter the name of the file to classify: ")
-            base_folder = input("Enter the base folder name: ")
-            target_folder = input("Enter the target folder name: ")
+        elif "classify" in command:
+            speak("What is the name of the file to classify?")
+            file_name = listen().lower()
+            speak("Which base folder is this document in?")
+            base_folder = listen().lower()
+            speak("What target folder is this document in?")
+            target_folder = listen().lower()
             classify_document(file_name, base_folder, target_folder)
+            speak(f"Document {file_name} classified successfully.")
 
-        elif choice == "move":
-            file_name = input("Enter the name of the file to move: ")
-            current_base_folder = input("Enter the base folder name in which the file currently is : ")
-            current_folder = input("Enter the folder name in which the file currently is : ")
-            target_base_folder = input("Enter the base folder name in which the file is to be moved : ")
-            target_folder = input("Enter the target folder name: ")
+        elif "move" in command:
+            speak("What is the name of the file to move?")
+            file_name = listen().lower()
+            speak("Which current base folder is this file in?")
+            current_base_folder = listen().lower()
+            speak("Which current folder is this file in?")
+            current_folder = listen().lower()
+            speak("Which target base folder should this file move to?")
+            target_base_folder = listen().lower()
+            speak("Which target folder should this file move to?")
+            target_folder = listen().lower()
             move_document(file_name, current_base_folder, current_folder, target_base_folder, target_folder)
+            speak(f"Document {file_name} moved successfully.")
 
-        elif choice == "retrieve":
-            document_name = input("Enter the name of the document to retrieve: ")
-            base_folder = input("Enter the base folder name: ")
-            target_folder = input("Enter the target folder name: ")
+        elif "retrieve" in command:
+            speak("What is the name of the document to retrieve?")
+            document_name = listen().lower()
+            speak("Which base folder is this document in?")
+            base_folder = listen().lower()
+            speak("What target folder is this document in?")
+            target_folder = listen().lower()
             retrieve_document(document_name, base_folder, target_folder)
+            speak(f"Document {document_name} retrieved successfully.")
 
-        elif choice == "list":
-            base_folder = input("Enter the base folder name: ")
-            target_folder = input("Enter the target folder name: ")
+        elif "list" in command:
+            speak("Which base folder would you like to list documents from?")
+            base_folder = listen().lower()
+            speak("Which target folder would you like to list documents from?")
+            target_folder = listen().lower()
             list_documents(base_folder, target_folder)
+            speak("Listing documents complete.")
 
-        elif choice == "exit":
-            print("Exiting Document Management Module.")
+        elif "exit" in command:
+            speak("Exiting Document Management module.")
             break
+        else:
+            speak("I didn't understand that command. Please try again.")
+
 
 if __name__ == "__main__":
-    main()
+    document_voice_interaction()

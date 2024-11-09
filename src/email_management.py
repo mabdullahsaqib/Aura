@@ -8,6 +8,14 @@ from email.mime.text import MIMEText
 import google.generativeai as genai  # Ensure Gemini API client is imported
 from google.auth.transport.requests import Request
 from config import GEMINI_API_KEY, GMAIL_CREDENTIALS_PATH, GMAIL_TOKEN_PATH
+import speech_recognition as sr
+import pyttsx3
+
+
+# Initialize recognizer and text-to-speech
+recognizer = sr.Recognizer()
+engine = pyttsx3.init()
+engine.setProperty('rate', 150)  # Adjust speaking rate if needed
 
 # Define the Gmail API scope
 SCOPES = ['https://www.googleapis.com/auth/gmail.readonly',
@@ -108,19 +116,43 @@ def send_email_with_generated_response(service, email_id):
     except HttpError as error:
         print(f"An error occurred: {error}")
 
+def speak(text):
+    engine.say(text)
+    engine.runAndWait()
+
+def listen():
+    with sr.Microphone() as source:
+        print("Listening...")
+        audio = recognizer.listen(source)
+    try:
+        return recognizer.recognize_google(audio)
+    except sr.UnknownValueError:
+        speak("I didn't catch that.")
+        return ""
+    except sr.RequestError:
+        speak("Voice service unavailable.")
+        return ""
+
 # Example usage
-if __name__ == "__main__":
+def email_voice_interaction(command):
     creds = authenticate_gmail()
     service = build('gmail', 'v1', credentials=creds)
 
-    # Fetch recent emails
-    fetch_emails(service)
+    if "fetch" in command or "emails" in command:
+        fetch_emails(service)
+    elif "send" in command and "email" in command:
+        # Assuming user provides the email, subject, and message in the command
+        # Example: "Send an email to example@test.com with subject Test and message Hello"
+        to_email = "example@test.com"
+        subject = "Test"
+        message_text = "Hello"
+        send_email(service, to_email, subject, message_text)
+    elif "summarize" in command and "email" in command:
+        email_id = "example_email_id"  # Fetch email ID dynamically
+        summarize_email(service, email_id)
+    elif "reply" in command and "email" in command:
+        email_id = "example_email_id"  # Fetch email ID dynamically
+        send_email_with_generated_response(service, email_id)
 
-    # Example: Send an email
-    #send_email(service, "test@test.test", "Test Email", "This is a test email sent from Aura.")
-
-    # Example: Summarize an email by ID
-    # summarize_email(service, "EMAIL_ID_HERE")
-
-    # Example: Generate and send a response
-    # send_email_with_generated_response(service, "EMAIL_ID_HERE")
+if __name__ == "__main__":
+    email_voice_interaction("fetch emails")

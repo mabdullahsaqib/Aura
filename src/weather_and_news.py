@@ -1,5 +1,13 @@
 import requests
 from config import WEATHER_API_KEY, WEATHER_API_HOST, NEWS_API_KEY
+import speech_recognition as sr
+import pyttsx3
+
+
+# Initialize recognizer and text-to-speech
+recognizer = sr.Recognizer()
+engine = pyttsx3.init()
+engine.setProperty('rate', 150)  # Adjust speaking rate if needed
 
 # Weather API setup
 WEATHER_API_URL = "https://weatherapi-com.p.rapidapi.com/current.json"
@@ -67,23 +75,43 @@ def get_news(country="us", category="general", num_articles=5):
         print(f"Error fetching news data: {e}")
         return None
 
+def speak(text):
+    engine.say(text)
+    engine.runAndWait()
 
-# Example usage
-if __name__ == "__main__":
-    # Fetch weather for a location
-    weather_info = get_weather("Canada")
-    if weather_info:
-        print("Weather Update:")
-        print(f"Location: {weather_info['location']}")
-        print(f"Temperature: {weather_info['temperature']} °C")
-        print(f"Condition: {weather_info['condition']}")
-        print(f"Humidity: {weather_info['humidity']}%")
-        print(f"Wind Speed: {weather_info['wind_speed']} kph")
+def listen():
+    with sr.Microphone() as source:
+        print("Listening...")
+        audio = recognizer.listen(source)
+    try:
+        return recognizer.recognize_google(audio)
+    except sr.UnknownValueError:
+        speak("I didn't catch that.")
+        return ""
+    except sr.RequestError:
+        speak("Voice service unavailable.")
+        return ""
 
-    # Fetch top news headlines
-    news_headlines = get_news(country="us", category="technology", num_articles=3)
-    if news_headlines:
-        print("\nNews Update:")
-        for i, article in enumerate(news_headlines, 1):
-            print(f"{i}. {article['title']}")
-            print(f"   Description: {article['description']}")
+
+# Function to handle voice commands for Weather and News
+def weather_and_news_voice_interaction(command):
+    if "weather" in command:
+        weather_info = get_weather("Canada")
+        if weather_info:
+            speak(
+                f"The weather in {weather_info['location']} is {weather_info['temperature']} degrees Celsius, {weather_info['condition']}.")
+            speak(
+                f"The humidity is {weather_info['humidity']}%, and the wind speed is {weather_info['wind_speed']} kilometers per hour.")
+        else:
+            speak("Sorry, I couldn't fetch the weather information.")
+
+    elif "news" in command:
+        speak("Fetching the latest news...")
+        news_headlines = get_news(num_articles=5)
+        if news_headlines:
+            speak(f"Here are the top 5 headlines:")
+            for i, article in enumerate(news_headlines, 1):
+                speak(f"Headline {i}: {article['title']}.")
+                speak(f"Description: {article['description']}")
+        else:
+            speak("Sorry, I couldn't fetch the news.")

@@ -2,6 +2,13 @@ import requests
 import webbrowser
 from config import GOOGLE_API_KEY, GOOGLE_CSE_ID, GEMINI_API_KEY
 import google.generativeai as genai
+import speech_recognition as sr
+import pyttsx3
+
+# Initialize recognizer and text-to-speech
+recognizer = sr.Recognizer()
+engine = pyttsx3.init()
+engine.setProperty('rate', 150)  # Adjust speaking rate if needed
 
 
 # Configure Gemini API
@@ -102,31 +109,66 @@ def open_link(results):
         print("No link selected.")
 
 
-def main():
+def speak(text):
+    """Convert text to speech."""
+    engine.say(text)
+    engine.runAndWait()
+
+
+def listen():
+    """Capture audio input from user."""
+    with sr.Microphone() as source:
+        print("Listening...")
+        audio = recognizer.listen(source)
+    try:
+        return recognizer.recognize_google(audio)
+    except sr.UnknownValueError:
+        speak("I didn't catch that.")
+        return ""
+    except sr.RequestError:
+        speak("Voice service unavailable.")
+        return ""
+
+
+def web_browsing_voice_interaction():
     """
-    Main function to handle user interaction, allowing them to search, display results,
-    summarize, and open links.
+    Voice interaction for the Web Browsing Module.
+    Handles search, displays results, summarizes, and opens links based on voice commands.
     """
-    print("Welcome to Aura's Web Browsing Module!")
+    speak("Welcome to Aura's Web Browsing Module. Please say a search query.")
+
     while True:
-        query = input("\nEnter your search query (or type 'exit' to quit): ")
-        if query.lower() == 'exit':
-            print("Exiting the Web Browsing Module.")
+        query = listen()
+
+        if "exit" in query.lower():
+            speak("Exiting the Web Browsing Module.")
             break
 
-        # Fetch search results
-        results = search_web(query)
+        if query:
+            # Fetch search results
+            speak(f"Searching for {query}.")
+            results = search_web(query)
 
-        # Display results
-        display_results(results)
+            # Display results
+            speak("Here are the top search results.")
+            display_results(results)
 
-        # Summarize results with Gemini
-        summary = summarize_results_with_gemini(results)
-        print("\nSummary of Search Results:\n", summary)
+            # Summarize results with Gemini
+            speak("Would you like a summary of the results?")
+            if "yes" in listen().lower():
+                summary = summarize_results_with_gemini(results)
+                speak("Here is a summary of the search results.")
+                print("\nSummary of Search Results:\n", summary)
 
-        # Allow the user to open a link
-        open_link(results)
+            # Open a link if requested
+            speak("Would you like to open any of these links?")
+            response = listen().lower()
+            if "yes" in response:
+                open_link(results)
+            else:
+                speak("Returning to search query mode. Please provide another query or say 'exit' to quit.")
 
 
 if __name__ == "__main__":
-    main()
+    web_browsing_voice_interaction()
+

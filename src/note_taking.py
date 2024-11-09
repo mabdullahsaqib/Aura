@@ -3,6 +3,15 @@ from firebase_admin import credentials, firestore
 import google.generativeai as genai
 from datetime import datetime
 from config import FIREBASE_CREDENTIALS_PATH , GEMINI_API_KEY
+import speech_recognition as sr
+import pyttsx3
+
+
+# Initialize recognizer and text-to-speech
+recognizer = sr.Recognizer()
+engine = pyttsx3.init()
+engine.setProperty('rate', 150)  # Adjust speaking rate if needed
+
 
 # Initialize Firestore
 cred = credentials.Certificate(FIREBASE_CREDENTIALS_PATH)
@@ -127,61 +136,101 @@ def edit_note(note_id, new_title=None, new_content=None, new_tags=None):
     note_ref.update(update_data)
     print("Note updated successfully!")
 
+def speak(text):
+    engine.say(text)
+    engine.runAndWait()
 
-def main():
-    """
-    Main function to interact with the Note-Taking Module.
-    """
-    print("Welcome to Aura's Note-Taking Module!")
+def listen():
+    with sr.Microphone() as source:
+        print("Listening...")
+        audio = recognizer.listen(source)
+    try:
+        return recognizer.recognize_google(audio)
+    except sr.UnknownValueError:
+        speak("I didn't catch that.")
+        return ""
+    except sr.RequestError:
+        speak("Voice service unavailable.")
+        return ""
+
+def note_voice_interaction():
+    speak(
+        "Welcome to Aura's Note-Taking Module. You can add, retrieve, summarize, delete, or edit notes. Say 'exit' to leave.")
+
     while True:
-        choice = input("\nChoose an option: [add, retrieve, retrieve_all, summarize, delete, edit, exit]: ").lower()
+        speak("What would you like to do?")
+        choice = listen().lower()
 
-        if choice == 'add':
-            title = input("Enter the note title: ")
-            content = input("Enter the note content: ")
-            tags = input("Enter tags (comma-separated): ").split(",") if input(
-                "Add tags? (y/n): ").lower() == 'y' else None
+        if "add" in choice:
+            speak("Please say the note title.")
+            title = listen()
+            speak("Please say the note content.")
+            content = listen()
+            speak("Would you like to add tags? Say yes or no.")
+            if "yes" in listen().lower():
+                speak("Please say the tags, separated by commas.")
+                tags = listen().split(",")
+            else:
+                tags = None
             add_note(title, content, tags)
+            speak("Note added successfully.")
 
-        elif choice == 'retrieve':
-            keyword = input("Enter a keyword to search (or leave blank): ") or None
-            tag = input("Enter a tag to filter by (or leave blank): ") or None
+        elif "retrieve" in choice and "all" not in choice:
+            speak("Please say a keyword or leave blank.")
+            keyword = listen() or None
+            speak("Please say a tag to filter by, or leave blank.")
+            tag = listen() or None
             notes = retrieve_notes(keyword=keyword, tag=tag)
             for note in notes:
-                print(f"\nNote ID: {note['note_id']}")
-                print(f"Title: {note['title']}")
-                print(f"Content: {note['content']}")
-                print(f"Timestamp: {note['timestamp']}")
-                print(f"Tags: {note.get('tags', [])}\n")
+                speak(f"Note ID: {note['note_id']}, Title: {note['title']}, Content: {note['content']}")
 
-        elif choice == 'retrieve_all':
-            retrieve_all_notes()
+        elif "retrieve all" in choice:
+            notes = retrieve_all_notes()
+            for note in notes:
+                speak(f"Note ID: {note['note_id']}, Title: {note['title']}")
 
-        elif choice == 'summarize':
-            note_id = input("Enter the note ID to summarize: ")
+        elif "summarize" in choice:
+            speak("Please say the note ID to summarize.")
+            note_id = listen()
             note = db.collection("notes").document(note_id).get()
             if note.exists:
                 summary = summarize_note(note.to_dict()["content"])
-                print("\nSummary:\n", summary)
+                speak(f"Summary: {summary}")
             else:
-                print("Note not found.")
+                speak("Note not found.")
 
-        elif choice == 'delete':
-            note_id = input("Enter the note ID to delete: ")
+        elif "delete" in choice:
+            speak("Please say the note ID to delete.")
+            note_id = listen()
             delete_note(note_id)
+            speak("Note deleted successfully.")
 
-        elif choice == 'edit':
-            note_id = input("Enter the note ID to edit: ")
-            new_title = input("Enter new title (leave blank to skip): ") or None
-            new_content = input("Enter new content (leave blank to skip): ") or None
-            new_tags = input("Enter new tags (comma-separated, or leave blank): ").split(",") if input(
-                "Update tags? (y/n): ").lower() == 'y' else None
+        elif "edit" in choice:
+            speak("Please say the note ID to edit.")
+            note_id = listen()
+            speak("Please say the new title or say 'skip' to leave unchanged.")
+            new_title = listen()
+            if "skip" in new_title.lower():
+                new_title = None
+            speak("Please say the new content or say 'skip' to leave unchanged.")
+            new_content = listen()
+            if "skip" in new_content.lower():
+                new_content = None
+            speak("Would you like to update tags? Say yes or no.")
+            if "yes" in listen().lower():
+                speak("Please say the new tags, separated by commas.")
+                new_tags = listen().split(",")
+            else:
+                new_tags = None
             edit_note(note_id, new_title, new_content, new_tags)
+            speak("Note edited successfully.")
 
-        elif choice == 'exit':
-            print("Exiting the Note-Taking Module.")
+        elif "exit" in choice:
+            speak("Exiting the Note-Taking Module.")
             break
 
+        else:
+            speak("Option not recognized, please try again.")
 
 if __name__ == "__main__":
-    main()
+    note_voice_interaction()

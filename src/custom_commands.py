@@ -3,6 +3,14 @@ from firebase_admin import credentials, firestore
 import google.generativeai as genai
 import subprocess
 from config import FIREBASE_CREDENTIALS_PATH, GEMINI_API_KEY
+import speech_recognition as sr
+import pyttsx3
+
+
+# Initialize recognizer and text-to-speech
+recognizer = sr.Recognizer()
+engine = pyttsx3.init()
+engine.setProperty('rate', 150)  # Adjust speaking rate if needed
 
 # Firebase initialization
 cred = credentials.Certificate(FIREBASE_CREDENTIALS_PATH)
@@ -12,6 +20,23 @@ db = firestore.client()
 # Configure Gemini
 genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel("gemini-1.5-flash")
+
+def speak(text):
+    engine.say(text)
+    engine.runAndWait()
+
+def listen():
+    with sr.Microphone() as source:
+        print("Listening...")
+        audio = recognizer.listen(source)
+    try:
+        return recognizer.recognize_google(audio)
+    except sr.UnknownValueError:
+        speak("I didn't catch that.")
+        return ""
+    except sr.RequestError:
+        speak("Voice service unavailable.")
+        return ""
 
 def check_and_execute_command(command_name):
     """
@@ -26,36 +51,41 @@ def check_and_execute_command(command_name):
         # Execute existing command
         command_action = command_doc.to_dict()["action"]
         subprocess.run(command_action, shell=True)
-        print(f"Executed existing command '{command_name}'.")
+        speak(f"Executed existing command '{command_name}'.")
     else:
         # Step 2: Prompt user to define new command
-        user_confirm = input(f"The command '{command_name}' does not exist. Would you like to create it? (yes/no): ")
-        if user_confirm.lower() == "yes":
+        speak(f"The command '{command_name}' does not exist. Would you like to create it?")
+        user_confirm = listen()
+
+        if user_confirm and "yes" in user_confirm:
             # Step 3: Get command description from the user
-            command_description = input(f"Please describe what '{command_name}' should do: ")
+            speak(f"Please describe what '{command_name}' should do.")
+            command_description = listen()
 
-            try:
-                # Step 4: Pass command description to Gemini
-                gemini_response = model.generate_content("Suggest a command that can be executed in shell and perform this action : " + command_description + "\nOnly write the command and nothing else. not even quotation marks or endline characters.")
-                suggested_command = gemini_response.text.strip()
-            except Exception as e:
-                print(f"Error generating command suggestion: {e}")
-                return None
+            if command_description:
+                try:
+                    # Step 4: Pass command description to Gemini
+                    gemini_response = model.generate_content("Suggest a command that can be executed in shell and perform this action : " + command_description + "\nOnly write the command and nothing else. not even quotation marks or endline characters.")
+                    suggested_command = gemini_response.text.strip()
+                except Exception as e:
+                    speak(f"Error generating command suggestion: {e}")
+                    return None
 
-            # Confirm the suggested command with the user
-            print(f"Suggested command: {suggested_command}")
-            final_confirm = input("Would you like to save this command? (yes/no): ")
-            if final_confirm.lower() == "yes":
-                # Step 5: Store the new command in Firestore
-                command_ref.set({
-                    "action": suggested_command
-                })
-                print(f"Custom command '{command_name}' added successfully and ready for use.")
+                # Confirm the suggested command with the user
+                speak(f"Suggested command: {suggested_command}")
+                speak("Would you like to save this command?")
+                final_confirm = listen()
+
+                if final_confirm and "yes" in final_confirm:
+                    # Step 5: Store the new command in Firestore
+                    command_ref.set({
+                        "action": suggested_command
+                    })
+                    speak(f"Custom command '{command_name}' added successfully and ready for use.")
+                else:
+                    speak("Command creation canceled.")
         else:
-            print("Command creation canceled.")
+            speak("Command creation canceled.")
 
-# Example Usage
 if __name__ == "__main__":
-    # User initiates command
-    user_command = input("Please say your command: ")
-    check_and_execute_command(user_command)
+    check_and_execute_command("open terminal")

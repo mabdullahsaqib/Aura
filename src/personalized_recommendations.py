@@ -69,19 +69,25 @@ def general_recommendations(user_id):
 
     return gemini_recommendation
 
+
+# Example function to handle voice command input for recommendations
+def recommendations_voice_interaction(command):
+    user_id = "teuff"
+    if "recommend news" in command.lower():
+        news = recommend_news(user_id)
+        return f"Here are some {news} for you!"
+
+    elif "recommend tasks" in command.lower():
+        tasks = recommend_tasks(user_id)
+        return f"Here are some tasks you can focus on: {tasks}"
+
+    elif "general recommendation" in command.lower():
+        recommendation = general_recommendations(user_id)
+        return recommendation
+
+    else:
+        return "Sorry, I didn't quite catch that. Please specify if you want news, tasks, or general recommendations."
+
 # Example usage
 if __name__ == "__main__":
-    user_id = "teuff"
-
-    # Set preferences
-    update_preferences(user_id, "news_category", "entertainment")
-    update_preferences(user_id, "weather_updates", True)
-
-    # Recommend based on preferences
-    news = recommend_news(user_id)
-    tasks = recommend_tasks(user_id)
-    greeting = general_recommendations(user_id)
-
-    print("News Recommendation:", news)
-    print("Task Recommendation:", tasks)
-    print("Gemini Recommendation:", greeting)
+    recommendations_voice_interaction("Recommend tasks")
