@@ -101,8 +101,3 @@ def meeting_summary_voice_interaction():
         speak("The meeting summary has been processed and stored.")
     else:
         speak("Sorry, I couldn't process the audio file. Please try again.")
-
-
-# Example Usage
-if __name__ == "__main__":
-    meeting_summary_voice_interaction()
