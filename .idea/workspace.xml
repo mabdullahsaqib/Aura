@@ -4,18 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d6a46a99-3744-4c5c-bb6d-cb97ef0c774f" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/src/custom_commands.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/custom_commands.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/document_management.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/document_management.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/email_management.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/email_management.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/entertainment_controls.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/entertainment_controls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/meeting_summaries.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/meeting_summaries.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/note_taking.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/note_taking.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/realtime_translation.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/realtime_translation.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/task_management.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/task_management.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/voice_interaction.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/voice_interaction.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/weather_and_news.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/weather_and_news.py" afterDir="false" />
-    </list>
+    <list default="true" id="d6a46a99-3744-4c5c-bb6d-cb97ef0c774f" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -255,7 +244,7 @@
       <workItem from="1731072318650" duration="12127000" />
       <workItem from="1731086952167" duration="174000" />
       <workItem from="1731124300191" duration="5716000" />
-      <workItem from="1731151118632" duration="12191000" />
+      <workItem from="1731151118632" duration="12277000" />
     </task>
     <task id="LOCAL-00001" summary="added session history">
       <option name="closed" value="true" />
