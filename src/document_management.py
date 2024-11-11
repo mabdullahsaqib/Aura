@@ -57,7 +57,7 @@ def create_document(file_name, content, base_folder_name, target_folder_name):
         print(f"Document '{file_name}' created in '{target_path}'.")
 
 
-def edit_document(file_name, new_content, base_folder_name, target_folder_name):
+def edit_document(file_name, new_content, base_folder_name):
     """
     Edits an existing document by appending new content.
 
@@ -71,23 +71,16 @@ def edit_document(file_name, new_content, base_folder_name, target_folder_name):
         print(f"Base directory '{base_directory}' does not exist.")
         return
 
-    if base_folder_name == target_folder_name:
-        target_path = base_directory
+    file_path = findfile(file_name, base_directory)
+    if file_path:
+        with open(file_path, 'w') as file:
+            file.write(new_content)
+        print(f"Document '{file_name}' edited successfully.")
     else:
-        # Search for the target folder within the base directory
-        target_path = find_folder(base_directory, target_folder_name)
-
-    if target_path:
-        file_path = target_path / file_name
-        if file_path.exists():
-            with open(file_path, 'w') as file:
-                file.write(new_content)
-            print(f"Document '{file_name}' edited successfully.")
-        else:
-            print(f"Document '{file_name}' not found in '{target_path}'.")
+        print(f"Document '{file_name}' not found.")
 
 
-def delete_document(file_name, base_folder_name, target_folder_name):
+def delete_document(file_name, base_folder_name):
     """
     Deletes a document.
 
@@ -100,22 +93,15 @@ def delete_document(file_name, base_folder_name, target_folder_name):
         print(f"Base directory '{base_directory}' does not exist.")
         return
 
-    if base_folder_name == target_folder_name:
-        target_path = base_directory
+    file_path = findfile(file_name, base_directory)
+    if file_path:
+        file_path.unlink()
+        print(f"Document '{file_name}' deleted.")
     else:
-        # Search for the target folder within the base directory
-        target_path = find_folder(base_directory, target_folder_name)
-
-    if target_path:
-        file_path = target_path / file_name
-        if file_path.exists():
-            file_path.unlink()
-            print(f"Document '{file_name}' deleted from '{target_path}'.")
-        else:
-            print(f"Document '{file_name}' not found in '{target_path}'.")
+        print(f"Document '{file_name}' not found.")
 
 
-def summarize_document(file_name, base_folder_name, target_folder_name):
+def summarize_document(file_name, base_folder_name):
     """
     Summarizes the content of a document using Gemini.
 
@@ -131,27 +117,17 @@ def summarize_document(file_name, base_folder_name, target_folder_name):
         print(f"Base directory '{base_directory}' does not exist.")
         return
 
-    if base_folder_name == target_folder_name:
-        target_path = base_directory
+    file_path = findfile(file_name, base_directory)
+    if file_path:
+        with open(file_path, "r", encoding="utf-8") as file:
+            content = file.read()
+        response = model.generate_content("Summarize the following file content: " + content)
+        return response.text
     else:
-        # Search for the target folder within the base directory
-        target_path = find_folder(base_directory, target_folder_name)
-
-    if target_path:
-        file_path = target_path / file_name
-
-        if file_path.exists():
-            with open(file_name, "r", encoding="utf-8") as file:
-                content = file.read()
-            response = model.generate_content("Summarize the following file content: " + content)
-            return response.text
-
-        else:
-            print(f"Document '{file_name}' not found in {target_path}.")
-            return None
+        print(f"Document '{file_name}' not found.")
 
 
-def classify_document(file_name, base_folder_name, target_folder_name):
+def classify_document(file_name, base_folder_name):
     """
     Classifies a document based on its content using Gemini.
 
@@ -167,29 +143,19 @@ def classify_document(file_name, base_folder_name, target_folder_name):
         print(f"Base directory '{base_directory}' does not exist.")
         return
 
-    if base_folder_name == target_folder_name:
-        target_path = base_directory
+    file_path = findfile(file_name, base_directory)
+    if file_path:
+        with open(file_path, "r", encoding="utf-8") as file:
+            content = file.read()
+        response = model.generate_content(
+            "Classify this file content to a category, say only work or personal: " + content)
+        print(f"Document '{file_name}' classified as: {response.text.strip()}")
+        return response.text.strip()
     else:
-        # Search for the target folder within the base directory
-        target_path = find_folder(base_directory, target_folder_name)
-
-    if target_path:
-        file_path = target_path / file_name
-        if file_path.exists():
-            with open(file_name, "r", encoding="utf-8") as file:
-                content = file.read()
-
-            response = model.generate_content(
-                "Classify this file content to a category, say only work or personal: " + content)
-            print(f"Document '{file_name}' classified as: {response.text.strip()}")
-            return response.text.strip()
-
-        else:
-            print(f"Document '{file_name}' not found in {target_path}.")
-            return None
+        print(f"Document '{file_name}' not found.")
 
 
-def retrieve_document(document_name, base_folder_name, target_folder_name):
+def retrieve_document(file_name, base_folder_name):
     """
     Retrieves the path of a specific document within a target folder in a base folder.
 
@@ -208,29 +174,25 @@ def retrieve_document(document_name, base_folder_name, target_folder_name):
         print(f"Base directory '{base_directory}' does not exist.")
         return
 
-    if base_folder_name == target_folder_name:
-        target_path = base_directory
+    file_path = findfile(file_name, base_directory)
+    if file_path:
+        with open(file_path, "r") as file:
+            content = file.read()
+        print(f"\nContent of '{file_name}':\n{content}")
+        return content
     else:
-        # Search for the target folder within the base directory
-        target_path = find_folder(base_directory, target_folder_name)
+        print(f"Document '{file_name}' not found.")
 
-    if target_path:
-        document_path = target_path / document_name
-        if document_path.exists():
-            try:
-                with open(document_path, "r") as file:
-                    content = file.read()
-                print(f"\nContent of '{document_name}':\n{content}")
-                return content
 
-            except FileNotFoundError:
-                print(f"Document '{document_name}' not found at {target_path}.")
-                return None
+def findfile(name, path):
+    """Searches for a file by name in a specified base directory."""
+    for dirpath, _, filenames in os.walk(path):
+        for filename in filenames:
+            if Path(filename).stem.lower() == name:
+                return Path(dirpath) / filename
 
-        else:
-            print(f"Document '{document_name}' not found in '{target_path}'.")
-            return None
-
+    print(f"File '{name}' not found in '{path}'.")
+    return None
 
 def find_folder(base_directory, target_folder_name):
     """
@@ -251,8 +213,7 @@ def find_folder(base_directory, target_folder_name):
     return None
 
 
-def move_document(file_name, current_base_folder_name, current_folder_name, target_base_folder_name,
-                  target_folder_name):
+def move_document(file_name, current_base_folder_name, target_folder_name):
     """
     Moves a document to a target folder, searching within a base folder.
 
@@ -268,24 +229,16 @@ def move_document(file_name, current_base_folder_name, current_folder_name, targ
         print(f"Base directory '{current_base_directory}' does not exist.")
         return
 
-    if current_base_folder_name == current_folder_name:
+    if current_base_folder_name == target_folder_name:
         file_path = current_base_directory / file_name
     else:
         # search for the file in the current folder
-        current_path = find_folder(current_base_directory, current_folder_name)
-        if current_path:
-            file_path = current_path / file_name
-        else:
-            print(f"Document '{file_name}' not found in '{current_base_directory}'.")
-            return
+        file_path = findfile(file_name, current_base_directory)
 
-    target_base_directory = COMMON_FOLDERS.get(target_base_folder_name.lower(), Path(target_base_folder_name))
 
-    if not target_base_directory.exists():
-        print(f"Base directory '{target_base_directory}' does not exist.")
-        return
+    target_base_directory = current_base_directory
 
-    if target_base_folder_name == target_folder_name:
+    if target_base_directory == target_folder_name:
         target_path = target_base_directory
     else:
         # Search for the target folder within the base directory
@@ -361,9 +314,10 @@ def listen():
 
 
 def document_management_voice_interaction(command):
-    if "create" in command:
-        speak("What is the name of the file?")
-        file_name = listen().lower()
+    speak("What is the name of the document or file?")
+    file_name = listen().lower()
+    if "create" in command or "add" in command or "make" in command:
+        file_name += ".txt"
         speak("What content would you like to add to the file?")
         content = listen().lower()
         speak("Which base folder is the target folder in?")
@@ -373,71 +327,45 @@ def document_management_voice_interaction(command):
         create_document(file_name, content, base_folder, target_folder)
         speak(f"Document {file_name} created successfully.")
 
-    elif "edit" in command:
-        speak("What is the name of the file to edit?")
-        file_name = listen().lower()
+    elif "edit" in command or "append" in command or "update" in command or "modify" in command:
         speak("What new content would you like to append?")
         new_content = listen().lower()
         speak("Which base folder is the target folder or document in?")
         base_folder = listen().lower()
-        speak("What target folder is this document in?")
-        target_folder = listen().lower()
-        edit_document(file_name, new_content, base_folder, target_folder)
+        edit_document(file_name, new_content, base_folder)
         speak(f"Document {file_name} edited successfully.")
 
-    elif "delete" in command:
-        speak("What is the name of the file to delete?")
-        file_name = listen().lower()
-        speak("Which base folder is the target folder or this document in?")
+    elif "delete" in command or "remove" in command or "erase" in command or "trash" in command:
+        speak("Which base folder is this document in?")
         base_folder = listen().lower()
-        speak("What target folder is this document in?")
-        target_folder = listen().lower()
-        delete_document(file_name, base_folder, target_folder)
+        delete_document(file_name, base_folder)
         speak(f"Document {file_name} deleted successfully.")
 
-    elif "summarize" in command:
-        speak("What is the name of the file to summarize?")
-        file_name = listen().lower()
+    elif "summarize" in command or "summary" in command or "abstract" in command:
         speak("Which base folder is this document in?")
         base_folder = listen().lower()
-        speak("What target folder is this document in?")
-        target_folder = listen().lower()
-        summary = summarize_document(file_name, base_folder, target_folder)
+        summary = summarize_document(file_name, base_folder)
         speak(f"The summary of {file_name} is: {summary}")
 
-    elif "classify" in command:
-        speak("What is the name of the file to classify?")
-        file_name = listen().lower()
+    elif "classify" in command or "category" in command or "categorize" in command:
         speak("Which base folder is this document in?")
         base_folder = listen().lower()
-        speak("What target folder is this document in?")
-        target_folder = listen().lower()
-        classify_document(file_name, base_folder, target_folder)
+        classify_document(file_name, base_folder)
         speak(f"Document {file_name} classified successfully.")
 
-    elif "move" in command:
-        speak("What is the name of the file to move?")
-        file_name = listen().lower()
+    elif "move" in command or "transfer" in command or "shift" in command:
         speak("Which current base folder is this file in?")
         current_base_folder = listen().lower()
-        speak("Which current folder is this file in?")
-        current_folder = listen().lower()
-        speak("Which target base folder should this file move to?")
-        target_base_folder = listen().lower()
         speak("Which target folder should this file move to?")
         target_folder = listen().lower()
-        move_document(file_name, current_base_folder, current_folder, target_base_folder, target_folder)
+        move_document(file_name, current_base_folder, target_folder)
         speak(f"Document {file_name} moved successfully.")
 
-    elif "retrieve" in command:
-        speak("What is the name of the document to retrieve?")
-        document_name = listen().lower()
-        speak("Which base folder is the target folder or document in?")
+    elif "retrieve" in command or "get" in command or "open" in command or "read" in command or "show" in command or "display" in command or "look" in command:
+        speak("Which base folder is the document in?")
         base_folder = listen().lower()
-        speak("What target folder is this document in?")
-        target_folder = listen().lower()
-        retrieve_document(document_name, base_folder, target_folder)
-        speak(f"Document {document_name} retrieved successfully.")
+        retrieve_document(file_name, base_folder)
+        speak(f"Document {file_name} retrieved successfully.")
 
     elif "list" in command:
         speak("Which base folder would you like to list documents from?")

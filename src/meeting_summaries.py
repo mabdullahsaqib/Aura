@@ -1,3 +1,4 @@
+import os
 import google.generativeai as genai
 import pyttsx3
 import speech_recognition as sr
@@ -62,6 +63,14 @@ def process_meeting_summary(file_path, meeting_title):
         file.write(summary)
     print(f"Meeting summary for '{meeting_title}' processed and stored.")
 
+def findfile(name, path):
+    """Searches for a file by name in a specified base directory."""
+    for dirpath, _, filenames in os.walk(path):
+        if name in filenames:
+            return os.path.join(dirpath, name)
+    print(f"File '{name}' not found in '{path}'.")
+    return None
+
 
 def speak(text):
     engine.say(text)
@@ -92,8 +101,9 @@ def meeting_summary_voice_interaction():
     Asks user for the audio file and processes the meeting summary.
     """
 
-    speak("What's the name of the audio file?")
+    speak("What's the name of the .wav audio file? ")
     audio_file = listen()
+    audio_file = findfile(audio_file + ".wav", "meetings")
     if audio_file:
         speak(f"Processing the meeting summary from the file located at {audio_file}.")
         title = "Meeting Summary"

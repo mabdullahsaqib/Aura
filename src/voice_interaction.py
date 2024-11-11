@@ -83,13 +83,15 @@ def main():
     """
     Main function to handle voice commands and activate modules.
     """
-    greetings = ["Hello!", "Hi!", "Hey there!", "Greetings!", "Good day!", "Hello, how can I assist you today?"]
+    greetings = ["Hello, how can I assist you today?", "Hi, what can I do for you?", "Hey, how can I help you?", "Greetings, what can I do for you?", "Hello, how can I help you today?"]
+    goodbyes = ["See you later!", "Goodbye, have a great day!", "Goodbye, take care!", "Goodbye, see you soon!", "Goodbye, have a nice day!"]
     speak(random.choice(greetings))
+
 
     while True:
         command = listen()
         if "exit" in command.lower():
-            speak("Goodbye!")
+            speak(random.choice(goodbyes))
             break
         activate_module(command.lower())
 
