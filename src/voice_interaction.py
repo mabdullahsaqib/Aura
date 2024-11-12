@@ -35,7 +35,7 @@ session_id, chat = interaction_history()
 
 # Constants
 INACTIVITY_THRESHOLD = 1800  # 30 minutes in seconds
-Entertainment_Commands = ["play", "pause", "stop", "resume", "skip", "next", "previous", "shuffle", "repeat",
+Entertainment_Commands = ["play", "pause", "stop", "resume", "skip", "next", "previous", "shuffle", "repeat", "look"
                           "volume up", "volume down", "increase", "decrease", "seek", "jump"]
 
 

@@ -84,6 +84,8 @@ def volume_up():
 def volume_down():
     sp.volume(-10)
 
+def repeat_track():
+    sp.repeat("track")
 
 # Handle dynamic commands
 def handle_command(command, input_text=None):
@@ -114,6 +116,9 @@ def handle_command(command, input_text=None):
 
     elif "volume down" in command or "decrease" in command:
         volume_down()
+
+    elif "repeat" in command or "loop" in command:
+        repeat_track()
 
     elif "seek" in command or "jump" in command:
         try:
