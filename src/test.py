@@ -1,27 +1,20 @@
-from word2number import w2n
+import google.generativeai as genai
+from config import GEMINI_API_KEY
 
-string = "145"
-print(string[0])
-print(string[1:])
 
-# string = "one fourty five"
-# print(string[0])
-# print(string[1:])
-# print(w2n.word_to_num(string[0]))
-# print(w2n.word_to_num(string[1:]))
+# Create the model
+generation_config = {
+  "temperature": 1,
+  "top_p": 0.95,
+  "top_k": 40,
+  "max_output_tokens": 8192,
+  "response_mime_type": "text/plain",
+}
 
-string = "one forty five"
-string = string.split()
-print(string)
-print(w2n.word_to_num(string[0]))
-s = ''.join(string[1:])
-print(s)
-print(w2n.word_to_num(s))
+genai.configure(api_key= GEMINI_API_KEY)
+model = genai.GenerativeModel("gemini-1.5-flash")
+chat = model.start_chat()
 
-string = "one forty-five"
-string = string.split()
-print(string)
-print(w2n.word_to_num(string[0]))
-s = ''.join(string[1:])
-print(s)
-print(w2n.word_to_num(s))
+response = chat.send_message()
+print(response)
+print(response.text)

@@ -73,8 +73,8 @@ def activate_module(command):
         recommendations_voice_interaction(command)
     elif "entertainment" in command or "music" in command or "video" in command or "movie" in command or "spotify" in command or "youtube" in command:
         entertainment_control_voice_interaction()
-    elif "meeting" in command or "summary" in command or "transcript" in command:
-        meeting_summary_voice_interaction()
+    elif "meeting" in command or "summary" in command or "transcript" in command or "transcribe" in command:
+        meeting_summary_voice_interaction(command)
     else:
         check_and_execute_command(command)
 
