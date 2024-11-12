@@ -78,12 +78,18 @@ def skip_spotify_track():
 def previous_spotify_track():
     sp.previous_track()
 
+def volume_up():
+    sp.volume(10)
+
+def volume_down():
+    sp.volume(-10)
+
 
 # Handle dynamic commands
 def handle_command(command, input_text=None):
     command = command.lower()
 
-    if command == "play":
+    if "play" in command:
         if "spotify" in input_text.lower():
             play_spotify_track(input_text.replace("play", "").replace("on spotify", "").strip())
         elif "youtube" in input_text.lower():
@@ -91,19 +97,25 @@ def handle_command(command, input_text=None):
         elif "local" in input_text.lower():
             play_local_media(input_text.replace("play", "").replace("on local", "").strip())
 
-    elif "pause" in command:
+    elif "pause" in command or "stop" in command:
         pause_spotify()
 
     elif "resume" in command:
         resume_spotify()
 
-    elif "skip" in command:
+    elif "skip" in command or "next" in command:
         skip_spotify_track()
 
     elif "previous" in command:
         previous_spotify_track()
 
-    elif "seek" in command:
+    elif "volume up" in command or "increase" in command:
+        volume_up()
+
+    elif "volume down" in command or "decrease" in command:
+        volume_down()
+
+    elif "seek" in command or "jump" in command:
         try:
             speak("Tell the position to seek to :")
             if input_text.isdigit():
@@ -162,6 +174,6 @@ def entertainment_control_voice_interaction():
             command = listen()
             if command is None:
                 continue
-            if command == "exit":
+            if "exit" in command:
                 break
             handle_command(command)

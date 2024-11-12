@@ -62,6 +62,8 @@ def check_and_execute_command(command_name):
 
         if user_confirm and "yes" in user_confirm:
             # Step 3: Get command description from the user
+            speak(f"Please assign a command name.")
+            command_name = listen()
             speak(f"Please describe what '{command_name}' should do.")
             command_description = listen()
 

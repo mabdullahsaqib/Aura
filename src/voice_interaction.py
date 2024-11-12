@@ -5,14 +5,13 @@ import pyttsx3
 import speech_recognition as sr
 from firebase_admin import credentials
 from config import FIREBASE_CREDENTIALS_PATH
-from src.interaction_history import handle_user_command
 
 # Firebase initialization
 cred = credentials.Certificate(FIREBASE_CREDENTIALS_PATH)
 firebase_admin.initialize_app(cred)
 
 # Import all the modules as needed
-from interaction_history import get_last_session_history, get_next_session_id, initialize_chat_with_gemini, save_to_chat
+from interaction_history import interaction_history, handle_user_command
 from task_management import task_voice_interaction
 from web_browsing import web_browsing_voice_interaction
 from note_taking import note_voice_interaction
@@ -32,9 +31,7 @@ engine = pyttsx3.init()
 engine.setProperty('rate', 250)  # Adjust speaking rate if needed
 
 # Initialize chat history
-session_id = get_next_session_id()
-history = get_last_session_history()
-chat = initialize_chat_with_gemini(history)
+session_id, chat = interaction_history()
 
 # Constants
 INACTIVITY_THRESHOLD = 1800  # 30 minutes in seconds
@@ -67,6 +64,9 @@ def activate_module(command):
     """
     Activate the appropriate module based on the user's command.
     """
+
+    response =  handle_user_command(session_id, command, chat)
+
     if "task" in command:
         task_voice_interaction(command)
     elif "web" in command or "search" in command or "browse" in command:
@@ -87,10 +87,10 @@ def activate_module(command):
         entertainment_control_voice_interaction()
     elif "meeting" in command or "summary" in command or "transcript" in command or "transcribe" in command:
         meeting_summary_voice_interaction(command)
-    else:
+    elif "custom" in command or "execute" in command or "run" in command or "perform" in command or "open" in command or "launch" in command or "start" in command :
         check_and_execute_command(command)
-
-    handle_user_command(session_id, command, chat)
+    else:
+        speak(response)
 
 
 def main():

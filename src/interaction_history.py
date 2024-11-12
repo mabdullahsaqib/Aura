@@ -65,3 +65,10 @@ def handle_user_command(session_id: int, command: str, chat):
     save_to_chat(session_id, command, response.text)
     print(f"Aura: {response.text}")
     return response.text
+
+def interaction_history():
+    # Initialize chat history
+    session_id = get_next_session_id()
+    history = get_last_session_history()
+    chat = initialize_chat_with_gemini(history)
+    return session_id, chat
