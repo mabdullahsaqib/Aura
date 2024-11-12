@@ -123,6 +123,7 @@ def handle_command(command, input_text=None):
     elif "seek" in command or "jump" in command:
         try:
             speak("Tell the position to seek to :")
+            input_text = listen()
             if input_text.isdigit():
                 minutes = input_text[0]  # Extract time in seconds from input
                 seconds = input_text[1:] if len(input_text) > 1 else 0

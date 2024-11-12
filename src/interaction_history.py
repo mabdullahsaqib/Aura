@@ -41,7 +41,7 @@ def get_last_session_history():
                 history.append({"role": "user", "parts": message["command"]})
                 history.append({"role": "model", "parts": message["response"]})
 
-    print("Retrieved history:", history)
+    # print("Retrieved history:", history)
     return history
 
 
