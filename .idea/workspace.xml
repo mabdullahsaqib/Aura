@@ -6,9 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="d6a46a99-3744-4c5c-bb6d-cb97ef0c774f" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/custom_commands.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/custom_commands.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/entertainment_controls.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/entertainment_controls.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/interaction_history.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/interaction_history.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/personalized_recommendations.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/personalized_recommendations.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/task_management.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/task_management.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/voice_interaction.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/voice_interaction.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -254,7 +254,7 @@
       <workItem from="1731252307846" duration="1232000" />
       <workItem from="1731320315306" duration="5029000" />
       <workItem from="1731327324241" duration="1303000" />
-      <workItem from="1731413238418" duration="6642000" />
+      <workItem from="1731413238418" duration="10008000" />
     </task>
     <task id="LOCAL-00001" summary="added session history">
       <option name="closed" value="true" />

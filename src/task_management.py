@@ -67,7 +67,8 @@ def add_task_from_input(task_description, deadline):
         "created_at": datetime.now(),
     }
 
-    db.collection("tasks").add(task_data)
+    doc_ref = db.collection("tasks").document(task_description)
+    doc_ref.set(task_data)
     speak(f"Task '{task_description}' added with priority: {priority} and category: {category}")
 
 
@@ -100,6 +101,10 @@ def get_upcoming_tasks(deadline_date):
         speak(f"{task['title']} with deadline on {task['deadline']}")
     return upcoming_tasks
 
+def delete_task(task_title):
+    db.collection("tasks").document(task_title).delete()
+    print(f"Task '{task_title}' deleted successfully!")
+
 
 def task_voice_interaction(command):
     if "add" in command:
@@ -125,6 +130,11 @@ def task_voice_interaction(command):
         deadline_input = listen()
         deadline_date = dateparser.parse(deadline_input)
         get_upcoming_tasks(deadline_date)
+
+    elif "delete" in command:
+        speak("What is the title of the task you would like to delete?")
+        task_title = listen()
+        delete_task(task_title)
 
     else:
         speak("Sorry, I didn't understand that command.")

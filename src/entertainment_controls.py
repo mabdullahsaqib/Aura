@@ -160,20 +160,22 @@ def listen():
                 speak("Voice service unavailable.")
                 return ""
 
-def entertainment_control_voice_interaction():
+def entertainment_control_voice_interaction(command):
     # Listen for media-related commands
-    speak("What do you want to play today?")
-    media_name = listen()
-    speak("Where do you want to play it (Spotify, YouTube, local)?")
-    platform = listen()
 
-    handle_command("play", media_name + " on " + platform)
+    if "play" in command:
+        speak("What do you want to play today?")
+        media_name = listen()
+        speak("Where do you want to play it (Spotify, YouTube, local)?")
+        platform = listen()
 
-    if "spotify" in platform.lower():
-        while True:
-            command = listen()
-            if command is None:
-                continue
-            if "exit" in command:
-                break
-            handle_command(command)
+        if "spotify" in platform.lower():
+            handle_command("play", media_name + " on Spotify")
+        elif "youtube" in platform.lower():
+            handle_command("play", media_name + " on YouTube")
+        elif "local" in platform.lower() or "locally" in platform.lower():
+            handle_command("play", media_name + " on local")
+
+    else:
+        handle_command(command)
+

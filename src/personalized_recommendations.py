@@ -78,11 +78,11 @@ def general_recommendations(user_id):
 # Example function to handle voice command input for recommendations
 def recommendations_voice_interaction(command):
     user_id = "teuff"
-    if "recommend news" in command.lower():
+    if "news" in command.lower():
         news = recommend_news(user_id)
         return f"Here are some {news} for you!"
 
-    elif "recommend tasks" in command.lower():
+    elif "tasks" in command.lower():
         tasks = recommend_tasks(user_id)
         return f"Here are some tasks you can focus on: {tasks}"
 

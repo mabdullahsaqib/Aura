@@ -35,6 +35,8 @@ session_id, chat = interaction_history()
 
 # Constants
 INACTIVITY_THRESHOLD = 1800  # 30 minutes in seconds
+Entertainment_Commands = ["play", "pause", "stop", "resume", "skip", "next", "previous", "shuffle", "repeat",
+                          "volume up", "volume down", "increase", "decrease", "seek", "jump"]
 
 
 def speak(text):
@@ -49,7 +51,7 @@ def listen():
             audio = recognizer.listen(source)
             try:
                 command = recognizer.recognize_google(audio)
-                print("Command : " + command )
+                print("Command : " + command)
                 return command
             except sr.WaitTimeoutError:
                 continue
@@ -65,7 +67,7 @@ def activate_module(command):
     Activate the appropriate module based on the user's command.
     """
 
-    response =  handle_user_command(session_id, command, chat)
+    response = handle_user_command(session_id, command, chat)
 
     if "task" in command:
         task_voice_interaction(command)
@@ -83,11 +85,11 @@ def activate_module(command):
         weather_and_news_voice_interaction(command)
     elif "recommendation" in command or "suggestion" in command or "advice" in command or "recommendations" in command or "recommend" in command:
         recommendations_voice_interaction(command)
-    elif "entertainment" in command or "music" in command or "video" in command or "movie" in command or "spotify" in command or "youtube" in command:
-        entertainment_control_voice_interaction()
+    elif "entertainment" in command or "music" in command or "video" in command or "movie" in command or "spotify" in command or "youtube" in command or command in Entertainment_Commands:
+        entertainment_control_voice_interaction(command)
     elif "meeting" in command or "summary" in command or "transcript" in command or "transcribe" in command:
         meeting_summary_voice_interaction(command)
-    elif "custom" in command or "execute" in command or "run" in command or "perform" in command or "open" in command or "launch" in command or "start" in command :
+    elif "custom" in command or "execute" in command or "run" in command or "perform" in command or "open" in command or "launch" in command or "start" in command:
         check_and_execute_command(command)
     else:
         speak(response)
@@ -97,8 +99,10 @@ def main():
     """
     Main function to handle voice commands and activate modules.
     """
-    greetings = ["Hello, how can I assist you today?", "Hi, what can I do for you?", "Hey, how can I help you?", "Greetings, what can I do for you?", "Hello, how can I help you today?"]
-    goodbyes = ["See you later!", "Goodbye, have a great day!", "Goodbye, take care!", "Goodbye, see you soon!", "Goodbye, have a nice day!"]
+    greetings = ["Hello, how can I assist you today?", "Hi, what can I do for you?", "Hey, how can I help you?",
+                 "Greetings, what can I do for you?", "Hello, how can I help you today?"]
+    goodbyes = ["See you later!", "Goodbye, have a great day!", "Goodbye, take care!", "Goodbye, see you soon!",
+                "Goodbye, have a nice day!"]
     speak(random.choice(greetings))
 
     # Track last command time
