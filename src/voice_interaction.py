@@ -1,15 +1,18 @@
+import time
 import random
 import firebase_admin
 import pyttsx3
 import speech_recognition as sr
 from firebase_admin import credentials
 from config import FIREBASE_CREDENTIALS_PATH
+from src.interaction_history import handle_user_command
 
 # Firebase initialization
 cred = credentials.Certificate(FIREBASE_CREDENTIALS_PATH)
 firebase_admin.initialize_app(cred)
 
 # Import all the modules as needed
+from interaction_history import get_last_session_history, get_next_session_id, initialize_chat_with_gemini, save_to_chat
 from task_management import task_voice_interaction
 from web_browsing import web_browsing_voice_interaction
 from note_taking import note_voice_interaction
@@ -21,11 +24,20 @@ from weather_and_news import weather_and_news_voice_interaction
 from personalized_recommendations import recommendations_voice_interaction
 from entertainment_controls import entertainment_control_voice_interaction
 from meeting_summaries import meeting_summary_voice_interaction
+from advanced_notfilications import check_and_notify_tasks
 
 # Initialize recognizer and text-to-speech
 recognizer = sr.Recognizer()
 engine = pyttsx3.init()
 engine.setProperty('rate', 250)  # Adjust speaking rate if needed
+
+# Initialize chat history
+session_id = get_next_session_id()
+history = get_last_session_history()
+chat = initialize_chat_with_gemini(history)
+
+# Constants
+INACTIVITY_THRESHOLD = 1800  # 30 minutes in seconds
 
 
 def speak(text):
@@ -78,6 +90,8 @@ def activate_module(command):
     else:
         check_and_execute_command(command)
 
+    handle_user_command(session_id, command, chat)
+
 
 def main():
     """
@@ -87,8 +101,16 @@ def main():
     goodbyes = ["See you later!", "Goodbye, have a great day!", "Goodbye, take care!", "Goodbye, see you soon!", "Goodbye, have a nice day!"]
     speak(random.choice(greetings))
 
+    # Track last command time
+    last_command_time = time.time()
 
     while True:
+        # Check inactivity
+        if time.time() - last_command_time >= INACTIVITY_THRESHOLD:
+            check_and_notify_tasks()
+            # Reset timer after notification
+            last_command_time = time.time()
+
         command = listen()
         if "exit" in command.lower():
             speak(random.choice(goodbyes))

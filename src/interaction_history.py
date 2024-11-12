@@ -65,22 +65,3 @@ def handle_user_command(session_id: int, command: str, chat):
     save_to_chat(session_id, command, response.text)
     print(f"Aura: {response.text}")
     return response.text
-
-
-# Example Usage
-if __name__ == "__main__":
-    # Start a new session with an auto-incremented numeric ID
-    session_id = get_next_session_id()
-
-    # Retrieve history from the last session
-    last_session_history = get_last_session_history()
-
-    # Initialize GEMINI chat with history
-    chat = initialize_chat_with_gemini(last_session_history)
-
-    # Process a new user command
-    while True:
-        user_command = input("Command: ")
-        if user_command == "exit":
-            break
-        handle_user_command(session_id, user_command, chat)
