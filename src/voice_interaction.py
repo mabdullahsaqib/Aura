@@ -85,7 +85,7 @@ def activate_module(command):
         weather_and_news_voice_interaction(command)
     elif "recommendation" in command or "suggestion" in command or "advice" in command or "recommendations" in command or "recommend" in command:
         recommendations_voice_interaction(command)
-    elif "entertainment" in command or "music" in command or "video" in command or "movie" in command or "spotify" in command or "youtube" in command or command in Entertainment_Commands:
+    elif "entertainment" in command or "music" in command or "video" in command or "movie" in command or "spotify" in command or "youtube" in command or any(cmd in command for cmd in Entertainment_Commands):
         entertainment_control_voice_interaction(command)
     elif "meeting" in command or "summary" in command or "transcript" in command or "transcribe" in command:
         meeting_summary_voice_interaction(command)
