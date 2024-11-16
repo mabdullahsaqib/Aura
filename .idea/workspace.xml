@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d6a46a99-3744-4c5c-bb6d-cb97ef0c774f" name="Changes" comment="">
+    <list default="true" id="d6a46a99-3744-4c5c-bb6d-cb97ef0c774f" name="Changes" comment="added session history">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/voice_interaction.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/voice_interaction.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -255,6 +254,8 @@
       <workItem from="1731430596420" duration="1161000" />
       <workItem from="1731432538756" duration="2630000" />
       <workItem from="1731435440329" duration="465000" />
+      <workItem from="1731436291729" duration="719000" />
+      <workItem from="1731481803693" duration="36000" />
     </task>
     <task id="LOCAL-00001" summary="added session history">
       <option name="closed" value="true" />

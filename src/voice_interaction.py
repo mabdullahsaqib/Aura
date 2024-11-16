@@ -1,9 +1,11 @@
-import time
 import random
+import time
+
 import firebase_admin
 import pyttsx3
 import speech_recognition as sr
 from firebase_admin import credentials
+
 from config import FIREBASE_CREDENTIALS_PATH
 
 # Firebase initialization
@@ -36,7 +38,8 @@ session_id, chat = interaction_history()
 # Constants
 INACTIVITY_THRESHOLD = 1800  # 30 minutes in seconds
 Entertainment_Commands = ["play", "pause", "stop", "resume", "skip", "next", "previous", "shuffle", "repeat", "look"
-                          "volume up", "volume down", "increase", "decrease", "seek", "jump"]
+                                                                                                              "volume up",
+                          "volume down", "increase", "decrease", "seek", "jump"]
 
 
 def speak(text):
@@ -85,13 +88,15 @@ def activate_module(command):
         weather_and_news_voice_interaction(command)
     elif "recommendation" in command or "suggestion" in command or "advice" in command or "recommendations" in command or "recommend" in command:
         recommendations_voice_interaction(command)
-    elif "entertainment" in command or "music" in command or "video" in command or "movie" in command or "spotify" in command or "youtube" in command or any(cmd in command for cmd in Entertainment_Commands):
+    elif "entertainment" in command or "music" in command or "video" in command or "movie" in command or "spotify" in command or "youtube" in command or any(
+            cmd in command for cmd in Entertainment_Commands):
         entertainment_control_voice_interaction(command)
     elif "meeting" in command or "summary" in command or "transcript" in command or "transcribe" in command:
         meeting_summary_voice_interaction(command)
     elif "custom" in command or "execute" in command or "run" in command or "perform" in command or "open" in command or "launch" in command or "start" in command:
         check_and_execute_command(command)
     else:
+        print(response)
         speak(response)
 
 

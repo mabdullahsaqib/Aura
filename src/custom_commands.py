@@ -1,8 +1,10 @@
 import subprocess
+
 import google.generativeai as genai
 import pyttsx3
 import speech_recognition as sr
 from firebase_admin import firestore
+
 from config import GEMINI_API_KEY
 
 # Initialize recognizer and text-to-speech
@@ -30,7 +32,7 @@ def listen():
             audio = recognizer.listen(source)
             try:
                 command = recognizer.recognize_google(audio)
-                print("Command : " + command )
+                print("Command : " + command)
                 return command
             except sr.WaitTimeoutError:
                 continue

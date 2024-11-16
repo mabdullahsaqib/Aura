@@ -1,12 +1,14 @@
 import os
 import subprocess
 import webbrowser
+
 import pyttsx3
 import speech_recognition as sr
 import spotipy
 from googleapiclient.discovery import build
 from spotipy.oauth2 import SpotifyOAuth
 from word2number import w2n
+
 from config import SPOTIPY_CLIENT_ID, SPOTIPY_CLIENT_SECRET, SPOTIPY_REDIRECT_URI, YOUTUBE_API_KEY
 
 # Initialize recognizer and text-to-speech
@@ -78,14 +80,18 @@ def skip_spotify_track():
 def previous_spotify_track():
     sp.previous_track()
 
+
 def volume_up():
     sp.volume(10)
+
 
 def volume_down():
     sp.volume(-10)
 
+
 def repeat_track():
     sp.repeat("track")
+
 
 # Handle dynamic commands
 def handle_command(command, input_text=None):
@@ -156,7 +162,7 @@ def listen():
             audio = recognizer.listen(source)
             try:
                 command = recognizer.recognize_google(audio)
-                print("Command : " + command )
+                print("Command : " + command)
                 return command
             except sr.WaitTimeoutError:
                 continue
@@ -165,6 +171,7 @@ def listen():
             except sr.RequestError:
                 speak("Voice service unavailable.")
                 return ""
+
 
 def entertainment_control_voice_interaction(command):
     # Listen for media-related commands
@@ -184,4 +191,3 @@ def entertainment_control_voice_interaction(command):
 
     else:
         handle_command(command)
-

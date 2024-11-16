@@ -1,9 +1,11 @@
 from datetime import datetime
+
 import dateparser
 import google.generativeai as genai
 import pyttsx3
 import speech_recognition as sr
 from firebase_admin import firestore
+
 from config import GEMINI_API_KEY
 
 # Initialize Firestore
@@ -31,7 +33,7 @@ def listen():
             audio = recognizer.listen(source)
             try:
                 command = recognizer.recognize_google(audio)
-                print("Command : " + command )
+                print("Command : " + command)
                 return command
             except sr.WaitTimeoutError:
                 continue
@@ -76,9 +78,9 @@ def get_tasks_by_priority(priority):
     tasks = db.collection("tasks").where("priority", "==", priority).stream()
     task_list = [task.to_dict() for task in tasks]
 
-    speak(f"Tasks with priority '{priority}':")
+    speak(f"Tasks with priority '{priority}' are being displayed on the console")
     for task in task_list:
-        speak(f"{task['title']} with deadline on {task['deadline']}")
+        print(f"{task['title']} with deadline on {task['deadline']}")
     return task_list
 
 
@@ -86,9 +88,9 @@ def get_tasks_by_category(category):
     tasks = db.collection("tasks").where("category", "==", category).stream()
     task_list = [task.to_dict() for task in tasks]
 
-    speak(f"Tasks in category '{category}':")
+    speak(f"Tasks in category '{category}' are being displayed on the console")
     for task in task_list:
-        speak(f"{task['title']} with deadline on {task['deadline']}")
+        print(f"{task['title']} with deadline on {task['deadline']}")
     return task_list
 
 
@@ -96,14 +98,15 @@ def get_upcoming_tasks(deadline_date):
     tasks = db.collection("tasks").where("deadline", "<=", deadline_date).order_by("deadline").stream()
     upcoming_tasks = [task.to_dict() for task in tasks]
 
-    speak("Here are the upcoming tasks:")
+    speak("Here are the upcoming tasks")
     for task in upcoming_tasks:
-        speak(f"{task['title']} with deadline on {task['deadline']}")
+        print(f"{task['title']} with deadline on {task['deadline']}")
     return upcoming_tasks
+
 
 def delete_task(task_title):
     db.collection("tasks").document(task_title).delete()
-    print(f"Task '{task_title}' deleted successfully!")
+    speak(f"Task '{task_title}' deleted successfully!")
 
 
 def task_voice_interaction(command):

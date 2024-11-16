@@ -1,7 +1,8 @@
-import requests
-from config import WEATHER_API_KEY, WEATHER_API_HOST, NEWS_API_KEY
-import speech_recognition as sr
 import pyttsx3
+import requests
+import speech_recognition as sr
+
+from config import WEATHER_API_KEY, WEATHER_API_HOST, NEWS_API_KEY
 
 # Initialize recognizer and text-to-speech
 recognizer = sr.Recognizer()
@@ -86,7 +87,7 @@ def listen():
             audio = recognizer.listen(source)
             try:
                 command = recognizer.recognize_google(audio)
-                print("Command : " + command )
+                print("Command : " + command)
                 return command
             except sr.WaitTimeoutError:
                 continue

@@ -50,7 +50,7 @@ def listen():
             audio = recognizer.listen(source)
             try:
                 command = recognizer.recognize_google(audio)
-                print("Command : " + command )
+                print("Command : " + command)
                 return command
             except sr.WaitTimeoutError:
                 continue
@@ -73,7 +73,7 @@ def translation_voice_interaction():
         text_to_translate = listen()
 
         if text_to_translate.lower() == "exit":
-            print("Exiting Real-Time Translation.")
+            speak("Exiting Real-Time Translation.")
             break
 
         print(f"Original Text: {text_to_translate}")

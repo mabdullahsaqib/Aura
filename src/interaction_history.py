@@ -1,6 +1,8 @@
 from datetime import datetime
+
 import google.generativeai as genai
 from firebase_admin import firestore
+
 from config import GEMINI_API_KEY
 
 # Initialize Firestore
@@ -63,8 +65,9 @@ def save_to_chat(session_id: int, command: str, response: str):
 def handle_user_command(session_id: int, command: str, chat):
     response = chat.send_message(command)
     save_to_chat(session_id, command, response.text)
-    print(f"Aura: {response.text}")
+    # print(f"Aura: {response.text}")
     return response.text
+
 
 def interaction_history():
     # Initialize chat history

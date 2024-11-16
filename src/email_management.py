@@ -1,6 +1,7 @@
 import base64
 import os.path
 from email.mime.text import MIMEText
+
 import google.generativeai as genai  # Ensure Gemini API client is imported
 import pyttsx3
 import speech_recognition as sr
@@ -134,7 +135,7 @@ def listen():
             audio = recognizer.listen(source)
             try:
                 command = recognizer.recognize_google(audio)
-                print("Command : " + command )
+                print("Command : " + command)
                 return command
             except sr.WaitTimeoutError:
                 continue

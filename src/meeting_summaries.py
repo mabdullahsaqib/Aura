@@ -1,10 +1,12 @@
 import os
 from pathlib import Path
+
 import google.generativeai as genai
 import pyttsx3
 import speech_recognition as sr
 import whisper
 from firebase_admin import firestore
+
 from config import GEMINI_API_KEY
 
 # Initialize recognizer and text-to-speech
@@ -18,6 +20,7 @@ db = firestore.client()
 # Initialize GEMINI
 genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel("gemini-1.5-flash")
+
 
 # Initialize Whisper Model
 def load_model():
@@ -62,10 +65,11 @@ def process_meeting_summary(file_path, meeting_title):
         print("Summary complete. Storing in Firestore...")
         store_summary(meeting_title, transcript, summary)
         with open(f"{meeting_title}_summary.txt", "w") as file:
-            file.write("Summary : "+ summary)
+            file.write("Summary : " + summary)
         print(f"Meeting summary for '{meeting_title}' processed and stored.")
     except Exception as e:
         print(f"Error occurred : {e}")
+
 
 def findfile(name, path):
     """Searches for a file by name in a specified base directory."""
@@ -77,10 +81,12 @@ def findfile(name, path):
     print(f"File '{name}' not found in '{path}'.")
     return None
 
+
 def getmeetings():
     meetings = db.collection("meeting_summaries").stream()
     for meeting in meetings:
         print(meeting.to_dict())
+
 
 def retrieve_a_meeting(title):
     doc_ref = db.collection("meeting_summaries").document(title)
@@ -89,6 +95,7 @@ def retrieve_a_meeting(title):
         print(doc.to_dict())
     else:
         print(f"Meeting '{title}' not found in Firestore.")
+
 
 def speak(text):
     engine.say(text)
@@ -102,7 +109,7 @@ def listen():
             audio = recognizer.listen(source)
             try:
                 command = recognizer.recognize_google(audio)
-                print("Command : " + command )
+                print("Command : " + command)
                 return command
             except sr.WaitTimeoutError:
                 continue

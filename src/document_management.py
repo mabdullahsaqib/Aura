@@ -1,10 +1,12 @@
 import os
 import shutil
 from pathlib import Path
+
 import google.generativeai as genai
 import pyttsx3
 import speech_recognition as sr
 from firebase_admin import firestore
+
 from config import GEMINI_API_KEY
 
 # Initialize recognizer and text-to-speech
@@ -194,6 +196,7 @@ def findfile(name, path):
     print(f"File '{name}' not found in '{path}'.")
     return None
 
+
 def find_folder(base_directory, target_folder_name):
     """
     Recursively searches for a folder by name starting from a base directory.
@@ -234,7 +237,6 @@ def move_document(file_name, current_base_folder_name, target_folder_name):
     else:
         # search for the file in the current folder
         file_path = findfile(file_name, current_base_directory)
-
 
     target_base_directory = current_base_directory
 
@@ -302,7 +304,7 @@ def listen():
             audio = recognizer.listen(source)
             try:
                 command = recognizer.recognize_google(audio)
-                print("Command : " + command )
+                print("Command : " + command)
                 return command
             except sr.WaitTimeoutError:
                 continue
@@ -365,7 +367,7 @@ def document_management_voice_interaction(command):
         speak("Which base folder is the document in?")
         base_folder = listen().lower()
         retrieve_document(file_name, base_folder)
-        speak(f"Document {file_name} retrieved successfully.")
+        speak(f"Document {file_name} retrieved successfully. Check the console for details")
 
     elif "list" in command:
         speak("Which base folder would you like to list documents from?")

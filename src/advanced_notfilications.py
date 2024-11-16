@@ -1,4 +1,5 @@
 from datetime import datetime, timedelta
+
 from firebase_admin import firestore
 from plyer import notification
 
@@ -31,12 +32,3 @@ def check_and_notify_tasks():
         title = f"Upcoming Task: {task_data['title']}"
         message = f"Deadline: {task_data['deadline']}"
         send_desktop_notification(title, message)
-
-
-# Example Usage
-if __name__ == "__main__":
-    # Send a desktop notification
-    send_desktop_notification("Aura Notification", "This is a test notification from Aura.")
-
-    # Check tasks and send notifications
-    check_and_notify_tasks()

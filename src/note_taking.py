@@ -1,8 +1,10 @@
 from datetime import datetime
+
 import google.generativeai as genai
 import pyttsx3
 import speech_recognition as sr
 from firebase_admin import firestore
+
 from config import GEMINI_API_KEY
 
 # Initialize recognizer and text-to-speech
@@ -95,8 +97,8 @@ def retrieve_all_notes():
     all_notes = [{"note_id": note.id, "title": note.to_dict().get("title", "Untitled")} for note in notes]
 
     print("\nAll Notes:")
-    for note in all_notes:
-        print(f"Note ID: {note['note_id']}, Title: {note['title']}")
+    # for note in all_notes:
+    #     print(f"Note ID: {note['note_id']}, Title: {note['title']}")
 
     return all_notes
 
@@ -161,7 +163,7 @@ def listen():
             audio = recognizer.listen(source)
             try:
                 command = recognizer.recognize_google(audio)
-                print("Command : " + command )
+                print("Command : " + command)
                 return command
             except sr.WaitTimeoutError:
                 continue
